@@ -38,6 +38,13 @@ class _ReaderScreenState extends ConsumerState<EpubReaderScreen> {
     });
   }
 
+  void _translateBook() async {
+    const targetLanguage = 'ko'; // 예시로 스페인어로 번역
+    await ref
+        .read(epubControllerProvider.notifier)
+        .translateEpub(_currChapterIdx, targetLanguage);
+  }
+
   @override
   Widget build(BuildContext context) {
     final epubState = ref.watch(epubControllerProvider);
@@ -68,6 +75,10 @@ class _ReaderScreenState extends ConsumerState<EpubReaderScreen> {
               onPressed: () => _chapterChange(1),
               icon: const Icon(Icons.arrow_forward),
             ),
+            IconButton(
+              onPressed: _translateBook,
+              icon: const Icon(Icons.translate),
+            ),
           ],
         ),
         body: epubState.when(
@@ -81,44 +92,64 @@ class _ReaderScreenState extends ConsumerState<EpubReaderScreen> {
             _maxChapterIdx = book.chapters.length;
             return SingleChildScrollView(
               child: Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(50),
                 width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                child: Row(
                   children: [
-                    Text('Title: ${book.title}'),
-                    Text('Author: ${book.author}'),
-                    Text(
-                      'Chapter: ${book.chapters[_currChapterIdx].Title}',
-                    ),
-                    Html(
-                      data: book.chapters[_currChapterIdx].HtmlContent,
-                      style: {
-                        "body": Style(
-                          fontSize: FontSize(18.0),
-                          lineHeight: const LineHeight(1.5),
-                        ),
-                        "h1": Style(
-                          fontWeight: FontWeight.bold,
-                          fontSize: FontSize(24.0),
-                        ),
-                      },
-                      extensions: [
-                        TagExtension(
-                          tagsToExtend: {'img'},
-                          builder: (extensionContext) {
-                            final base64Image =
-                                ref.read(epubServiceProvider).getImageAsBase64(
-                                      '${extensionContext.attributes['src']}',
-                                    );
+                    Flexible(
+                      flex: 1,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Title: ${book.title}'),
+                          Text('Author: ${book.author}'),
+                          Text(
+                            'Chapter: ${book.chapters[_currChapterIdx].Title}',
+                          ),
+                          Html(
+                            data: book.chapters[_currChapterIdx].HtmlContent,
+                            style: {
+                              "body": Style(
+                                fontSize: FontSize(18.0),
+                                lineHeight: const LineHeight(1.5),
+                              ),
+                              "h1": Style(
+                                fontWeight: FontWeight.bold,
+                                fontSize: FontSize(24.0),
+                              ),
+                            },
+                            extensions: [
+                              TagExtension(
+                                tagsToExtend: {'img'},
+                                builder: (extensionContext) {
+                                  final base64Image = ref
+                                      .read(epubServiceProvider)
+                                      .getImageAsBase64(
+                                        '${extensionContext.attributes['src']}',
+                                      );
 
-                            return Images.Image.memory(
-                              base64Decode(base64Image.split(',').last),
-                              fit: BoxFit.contain,
-                            );
-                          },
+                                  return Images.Image.memory(
+                                    base64Decode(base64Image.split(',').last),
+                                    fit: BoxFit.contain,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: Container(
+                        child: Text(
+                          '${book.chapters[_currChapterIdx].HtmlContent}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            letterSpacing: 1.5,
+                          ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
