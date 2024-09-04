@@ -35,7 +35,22 @@ class EpubController extends StateNotifier<AsyncValue<EpubBookModel>> {
         if (chapterContent != null) {
           // HTML 내용을 파싱하여 단락별로 나누기
           final document = parse(chapterContent);
-          final paragraphs = document.getElementsByTagName('p');
+          String documentOuterHtml = document.outerHtml;
+
+          // 일본 소설 번역 중 후리가나를 표현하기 위해 사용하는 ruby 태그는 번역이 안되므로 별도 처리.
+          final rubyElements = document.getElementsByTagName('ruby');
+          if (rubyElements.isNotEmpty) {
+            for (var ruby in rubyElements) {
+              final rbElements = ruby.getElementsByTagName('rb');
+              for (var rb in rbElements) {
+                documentOuterHtml =
+                    documentOuterHtml.replaceAll(ruby.outerHtml, rb.innerHtml);
+              }
+            }
+          }
+
+          final replaceDocument = parse(documentOuterHtml);
+          final paragraphs = replaceDocument.getElementsByTagName('p');
 
           List<String> translatedParagraphs = [];
 
