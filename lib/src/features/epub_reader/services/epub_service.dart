@@ -8,10 +8,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EpubService {
   late EpubBook _epubBook;
 
+  final ProviderRef ref;
+
+  EpubService(this.ref);
+
   Future<EpubBookModel> loadEpub(String filePath) async {
     final bytes = File(filePath).readAsBytesSync();
     _epubBook = await EpubReader.readBook(bytes);
-    return EpubBookModel.fromEpubBook(_epubBook);
+    EpubBookModel epubBookModel = EpubBookModel.fromEpubBook(_epubBook);
+    ref.read(epubBookProvider.notifier).state = epubBookModel;
+    return epubBookModel;
   }
 
   String getImageAsBase64(String src) {
@@ -27,4 +33,4 @@ class EpubService {
   }
 }
 
-final epubServiceProvider = Provider<EpubService>((ref) => EpubService());
+final epubServiceProvider = Provider<EpubService>((ref) => EpubService(ref));

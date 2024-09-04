@@ -1,6 +1,6 @@
+import 'package:epub_translator/src/features/common/views/epub_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_file_model.dart';
-import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,7 +33,7 @@ class FilePickerScreen extends ConsumerWidget {
                 ref.read(epubFileProvider.notifier).state = filePath;
 
                 // EPUB Reader 화면으로 이동
-                context.goNamed(EpubReaderScreen.routerName);
+                context.goNamed(EpubScreen.routerName);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('No File Selected')),
