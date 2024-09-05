@@ -33,7 +33,7 @@ class FilePickerScreen extends ConsumerWidget {
                 ref.read(epubFileProvider.notifier).state = filePath;
 
                 // EPUB Reader 화면으로 이동
-                context.goNamed(EpubScreen.routerName);
+                context.pushNamed(EpubScreen.routerName);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('No File Selected')),
