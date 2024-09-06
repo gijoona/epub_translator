@@ -21,6 +21,6 @@ class EpubBookModel {
   }
 }
 
-final epubBookProvider = StateProvider<EpubBookModel>(
-  (ref) => EpubBookModel(title: '', author: '', chapters: []),
+final epubBookProvider = StateProvider<EpubBookModel?>(
+  (ref) => null,
 );

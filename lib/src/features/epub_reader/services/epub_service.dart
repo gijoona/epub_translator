@@ -12,12 +12,11 @@ class EpubService {
 
   EpubService(this.ref);
 
-  Future<EpubBookModel> loadEpub(String filePath) async {
+  Future<void> loadEpub(String filePath) async {
     final bytes = File(filePath).readAsBytesSync();
     _epubBook = await EpubReader.readBook(bytes);
-    EpubBookModel epubBookModel = EpubBookModel.fromEpubBook(_epubBook);
-    ref.read(epubBookProvider.notifier).state = epubBookModel;
-    return epubBookModel;
+    ref.read(epubBookProvider.notifier).state =
+        EpubBookModel.fromEpubBook(_epubBook);
   }
 
   String getImageAsBase64(String src) {

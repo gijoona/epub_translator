@@ -1,5 +1,5 @@
 import 'package:epub_translator/src/features/common/widgets/epub_contents_render.dart';
-import 'package:epub_translator/src/features/epub_reader/controllers/epub_controller.dart';
+import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,18 +21,11 @@ class EpubReaderScreen extends ConsumerStatefulWidget {
 class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
   @override
   Widget build(BuildContext context) {
-    final epubState = ref.watch(epubControllerProvider);
+    final book = ref.watch(epubBookProvider);
 
-    return Container(
-      child: epubState.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
-        error: (error, stackTrace) => Center(
-          child: Text('$error'),
-        ),
-        data: (book) {
-          return Column(
+    return book == null
+        ? const CircularProgressIndicator.adaptive()
+        : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text('Title: ${book.title}'),
@@ -45,8 +38,5 @@ class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
               ),
             ],
           );
-        },
-      ),
-    );
   }
 }

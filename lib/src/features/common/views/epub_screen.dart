@@ -1,4 +1,3 @@
-import 'package:epub_translator/src/features/epub_reader/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
 import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
@@ -19,7 +18,7 @@ class EpubScreen extends ConsumerStatefulWidget {
 class _EpubScreenState extends ConsumerState<EpubScreen> {
   int _currChapterIdx = 0;
   int _maxChapterIdx = 1;
-  late EpubBookModel _book;
+  late EpubBookModel? _book;
 
   @override
   void initState() {
@@ -28,8 +27,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   Future<void> loadEpub() async {
-    _book = await ref.read(epubControllerProvider.notifier).loadEpub();
-    _maxChapterIdx = _book.chapters.length;
+    _book = ref.read(epubBookProvider.notifier).state;
+    if (_book != null) {
+      _maxChapterIdx = _book!.chapters.length;
+    }
   }
 
   void _chapterChange(int addIndex) {
@@ -47,7 +48,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     const targetLanguage = 'ko'; // 예시로 한국어로 번역
     await ref
         .read(translationControllerProvider.notifier)
-        .translateEpub(_book.chapters[_currChapterIdx], targetLanguage);
+        .translateEpub(_book!.chapters[_currChapterIdx], targetLanguage);
   }
 
   @override
