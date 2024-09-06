@@ -1,4 +1,5 @@
 import 'package:dart_openai/dart_openai.dart';
+import 'package:epub_translator/src/features/common/configs/env_config.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TranslationService {
@@ -57,5 +58,5 @@ class TranslationService {
 }
 
 final translationServiceProvider = Provider(
-  (ref) => TranslationService(apiKey: 'api-key'),
+  (ref) => TranslationService(apiKey: ref.watch(envConfigProvider)),
 );
