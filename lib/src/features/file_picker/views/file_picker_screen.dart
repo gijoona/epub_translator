@@ -1,5 +1,7 @@
 import 'package:epub_translator/src/features/common/views/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/controllers/epub_controller.dart';
+import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
+import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,22 @@ class FilePickerScreen extends ConsumerWidget {
               if (result != null && result.files.single.path != null) {
                 // 선택된 EPUB 파일 load
                 String filePath = result.files.single.path!;
-                ref.read(epubControllerProvider.notifier).loadEpub(filePath);
+                await ref
+                    .read(epubControllerProvider.notifier)
+                    .loadEpub(filePath);
+                var book = ref.read(epubBookProvider.notifier).state;
+
+                if (book != null) {
+                  var currContentKey = book.contents.keys.elementAt(0);
+                  ref.read(epubContentProvider.notifier).state =
+                      EpubContentModel(
+                    title: book.title,
+                    author: book.author,
+                    chapter: book.chapters.first,
+                    contentKey: currContentKey,
+                    contentFile: book.contents[currContentKey]!,
+                  );
+                }
 
                 // EPUB Reader 화면으로 이동
                 context.pushNamed(EpubScreen.routerName);

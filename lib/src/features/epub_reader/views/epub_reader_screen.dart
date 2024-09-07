@@ -1,5 +1,5 @@
 import 'package:epub_translator/src/features/common/widgets/epub_contents_render.dart';
-import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
+import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -7,11 +7,11 @@ class EpubReaderScreen extends ConsumerStatefulWidget {
   static const routerURL = '/epubReader';
   static const routerName = 'epubReader';
 
-  final int chapterIdx;
+  final int contentIdx;
 
   const EpubReaderScreen({
     super.key,
-    required this.chapterIdx,
+    required this.contentIdx,
   });
 
   @override
@@ -21,20 +21,20 @@ class EpubReaderScreen extends ConsumerStatefulWidget {
 class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
   @override
   Widget build(BuildContext context) {
-    final book = ref.watch(epubBookProvider);
+    final contents = ref.watch(epubContentProvider);
 
-    return book == null
+    return contents == null
         ? const CircularProgressIndicator.adaptive()
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Title: ${book.title}'),
-              Text('Author: ${book.author}'),
+              Text('Title: ${contents.title}'),
+              Text('Author: ${contents.author}'),
               Text(
-                'Chapter: ${book.chapters[widget.chapterIdx].Title}',
+                'Chapter: ${contents.chapter.Title}',
               ),
               EpubContentsRender(
-                contents: '${book.chapters[widget.chapterIdx].HtmlContent}',
+                contents: '${contents.contentFile.Content}',
               ),
             ],
           );
