@@ -7,11 +7,8 @@ class EpubReaderScreen extends ConsumerStatefulWidget {
   static const routerURL = '/epubReader';
   static const routerName = 'epubReader';
 
-  final int contentIdx;
-
   const EpubReaderScreen({
     super.key,
-    required this.contentIdx,
   });
 
   @override

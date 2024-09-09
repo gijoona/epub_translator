@@ -111,16 +111,14 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           child: Container(
             padding: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width,
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
                   flex: 1,
-                  child: EpubReaderScreen(
-                    contentIdx: _currContentsIdx,
-                  ),
+                  child: EpubReaderScreen(),
                 ),
-                const Flexible(
+                Flexible(
                   flex: 1,
                   child: EpubTranslationScreen(),
                 ),
