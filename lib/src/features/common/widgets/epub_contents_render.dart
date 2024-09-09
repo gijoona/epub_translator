@@ -10,14 +10,14 @@ class EpubContentsRender extends ConsumerWidget {
   const EpubContentsRender({
     super.key,
     required String contents,
-  }) : _currChapterContents = contents;
+  }) : _currContents = contents;
 
-  final String _currChapterContents;
+  final String _currContents;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Html(
-      data: _currChapterContents,
+      data: _currContents,
       style: {
         "body": Style(
           fontSize: FontSize(18.0),
@@ -30,16 +30,36 @@ class EpubContentsRender extends ConsumerWidget {
       },
       extensions: [
         TagExtension(
-          tagsToExtend: {'img'},
-          builder: (extensionContext) {
-            final base64Image = ref.read(epubServiceProvider).getImageAsBase64(
-                  '${extensionContext.attributes['src']}',
-                );
+          tagsToExtend: {'img', 'svg'},
+          builder: (context) {
+            var element = context.element;
+            String? src;
+            // 표지 등의 이미지의 경우 img가 아닌 svg image로 표시하므로 별도의 처리로직이 필요
+            if (context.elementName == 'svg') {
+              if (context.element!.children.isNotEmpty &&
+                  context.element!.children.first.localName == 'image') {
+                element = context.element!.children.first;
+                var attributeName = element.attributes.keys
+                    .firstWhere((key) => key.toString().contains('href'));
+                src = element.attributes[attributeName];
+              }
+            } else {
+              src = element!.attributes['src'];
+            }
 
-            return Images.Image.memory(
-              base64Decode(base64Image.split(',').last),
-              fit: BoxFit.contain,
-            );
+            try {
+              final base64Image =
+                  ref.read(epubServiceProvider).getImageAsBase64(
+                        '$src',
+                      );
+
+              return Images.Image.memory(
+                base64Decode(base64Image.split(',').last),
+                fit: BoxFit.contain,
+              );
+            } catch (err) {
+              return const Text('Error loading image');
+            }
           },
         ),
       ],
