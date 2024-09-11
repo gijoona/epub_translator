@@ -42,6 +42,10 @@ class EpubContentsRender extends ConsumerWidget {
                 .where((e) => e.localName == 'rt')
                 .map((e) => e.text)
                 .join(' '); // rt 태그의 모든 텍스트 결합
+            const rbTextStyle = TextStyle(
+              fontSize: 18.0,
+              color: Colors.transparent,
+            );
 
             return RichText(
               text: TextSpan(
@@ -53,19 +57,13 @@ class EpubContentsRender extends ConsumerWidget {
                       children: [
                         Text(
                           rbTexts,
-                          style: const TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.transparent,
-                          ),
+                          style: rbTextStyle,
                         ),
                         Positioned(
                           top: 4,
                           child: Text(
                             rbTexts, // 한자 부분
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              color: Colors.black,
-                            ),
+                            style: rbTextStyle.copyWith(color: Colors.black),
                           ),
                         ),
                         Positioned(
