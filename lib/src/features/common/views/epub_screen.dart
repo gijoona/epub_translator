@@ -22,6 +22,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   int _maxContentsIdx = 1;
   late EpubBookModel? _book;
   late EpubChapter? _chapter;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -49,6 +50,25 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     setState(() {});
   }
 
+  void _changeChapterIndex(int addIndex) {
+    int currChapterIdx = _book!.chapters.indexOf(_chapter!);
+    int chgChapterIdx = currChapterIdx + addIndex;
+    if (chgChapterIdx <= 0 || _book!.chapters.length <= chgChapterIdx) return;
+
+    EpubChapter chgChapter = _book!.chapters[chgChapterIdx];
+    int searchContentsIdx = 0;
+    _book!.contents.forEach((key, value) {
+      if (key == chgChapter.ContentFileName) {
+        _currContentsIdx = searchContentsIdx;
+        loadEpubContents(searchContentsIdx);
+        return;
+      } else {
+        searchContentsIdx++;
+      }
+    });
+    setState(() {});
+  }
+
   void loadEpubContents(int index) {
     var currContentKey = _book!.contents.keys.elementAt(index);
 
@@ -64,6 +84,19 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       contentKey: currContentKey,
       contentFile: _book!.contents[currContentKey]!,
     );
+
+    _scrollPositionReset();
+  }
+
+  void _scrollPositionReset() {
+    // 스크롤을 제일 위로 올리는 코드
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _translateBook() async {
@@ -81,8 +114,12 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           title: const Text('EPUB Reader'),
           actions: [
             IconButton(
+              onPressed: () => _changeChapterIndex(-1),
+              icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
+            ),
+            IconButton(
               onPressed: () => _changeContentsIndex(-1),
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.keyboard_arrow_left_rounded),
             ),
             Text(' $_currContentsIdx'),
             const Text(
@@ -99,7 +136,11 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ),
             IconButton(
               onPressed: () => _changeContentsIndex(1),
-              icon: const Icon(Icons.arrow_forward),
+              icon: const Icon(Icons.keyboard_arrow_right_rounded),
+            ),
+            IconButton(
+              onPressed: () => _changeChapterIndex(1),
+              icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
             ),
             IconButton(
               onPressed: _translateBook,
@@ -108,6 +149,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           ],
         ),
         body: SingleChildScrollView(
+          controller: _scrollController,
           child: Container(
             padding: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width,
