@@ -29,6 +29,64 @@ class EpubContentsRender extends ConsumerWidget {
         ),
       },
       extensions: [
+        // ruby 태그 처리
+        TagExtension(
+          tagsToExtend: {'ruby'},
+          builder: (context) {
+            final rubyElement = context.element; // tree 대신 element로 접근
+            final rbTexts = rubyElement!.children
+                .where((e) => e.localName == 'rb')
+                .map((e) => e.text)
+                .join(''); // rb 태그의 모든 텍스트 결합
+            final rtTexts = rubyElement.children
+                .where((e) => e.localName == 'rt')
+                .map((e) => e.text)
+                .join(' '); // rt 태그의 모든 텍스트 결합
+
+            return RichText(
+              text: TextSpan(
+                children: [
+                  WidgetSpan(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        Text(
+                          rbTexts,
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.transparent,
+                          ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          child: Text(
+                            rbTexts, // 한자 부분
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: -8,
+                          child: Text(
+                            rtTexts, // 후리가나 부분
+                            style: const TextStyle(
+                              fontSize: 12.0, // 후리가나는 더 작은 글자 크기
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        // image 태그 처리
         TagExtension(
           tagsToExtend: {'img', 'svg'},
           builder: (context) {
