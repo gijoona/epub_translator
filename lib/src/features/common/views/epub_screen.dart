@@ -53,7 +53,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   void _changeChapterIndex(int addIndex) {
     int currChapterIdx = _book!.chapters.indexOf(_chapter!);
     int chgChapterIdx = currChapterIdx + addIndex;
-    if (chgChapterIdx <= 0 || _book!.chapters.length <= chgChapterIdx) return;
+    if (chgChapterIdx < 0 || _book!.chapters.length <= chgChapterIdx) return;
 
     EpubChapter chgChapter = _book!.chapters[chgChapterIdx];
     int searchContentsIdx = 0;
