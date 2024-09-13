@@ -36,10 +36,12 @@ class TranslationController extends AsyncNotifier<String> {
         if (rubyElements.isNotEmpty) {
           for (var ruby in rubyElements) {
             final rbElements = ruby.getElementsByTagName('rb');
+            var rbInnerHtml = '';
             for (var rb in rbElements) {
-              documentOuterHtml =
-                  documentOuterHtml.replaceAll(ruby.outerHtml, rb.innerHtml);
+              rbInnerHtml += rb.innerHtml;
             }
+            documentOuterHtml =
+                documentOuterHtml.replaceAll(ruby.outerHtml, rbInnerHtml);
           }
         }
 
