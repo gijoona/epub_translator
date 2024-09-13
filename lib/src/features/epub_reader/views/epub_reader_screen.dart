@@ -25,8 +25,6 @@ class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
         : Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Title: ${contents.title}'),
-              Text('Author: ${contents.author}'),
               Text(
                 'Chapter: ${contents.chapter.Title}',
               ),

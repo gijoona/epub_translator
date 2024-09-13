@@ -108,10 +108,14 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var bookInfo = ref.read(epubBookProvider.notifier).state;
+    var caption =
+        bookInfo != null ? '${bookInfo.title} (${bookInfo.author})' : '';
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('EPUB Reader'),
+          title: Text(caption),
+          centerTitle: true,
           actions: [
             IconButton(
               onPressed: () => _changeChapterIndex(-1),
