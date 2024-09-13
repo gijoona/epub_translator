@@ -22,16 +22,8 @@ class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
 
     return contents == null
         ? const CircularProgressIndicator.adaptive()
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Chapter: ${contents.chapter.Title}',
-              ),
-              EpubContentsRender(
-                contents: '${contents.contentFile.Content}',
-              ),
-            ],
+        : EpubContentsRender(
+            contents: '${contents.contentFile.Content}',
           );
   }
 }
