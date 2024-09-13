@@ -116,41 +116,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         appBar: AppBar(
           title: Text(caption),
           centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () => _changeChapterIndex(-1),
-              icon: const Icon(Icons.keyboard_double_arrow_left_rounded),
-            ),
-            IconButton(
-              onPressed: () => _changeContentsIndex(-1),
-              icon: const Icon(Icons.keyboard_arrow_left_rounded),
-            ),
-            Text(' $_currContentsIdx'),
-            const Text(
-              ' / ',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              '${_maxContentsIdx - 1} ',
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _changeContentsIndex(1),
-              icon: const Icon(Icons.keyboard_arrow_right_rounded),
-            ),
-            IconButton(
-              onPressed: () => _changeChapterIndex(1),
-              icon: const Icon(Icons.keyboard_double_arrow_right_rounded),
-            ),
-            IconButton(
-              onPressed: _translateBook,
-              icon: const Icon(Icons.translate),
-            ),
-          ],
         ),
         body: SingleChildScrollView(
           controller: _scrollController,
@@ -172,7 +137,74 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ),
           ),
         ),
+        floatingActionButton: _buildFAB(), // FAB 추가
       ),
+    );
+  }
+
+  Widget _buildFAB() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // 번역 버튼
+        FloatingActionButton(
+          heroTag: "translate",
+          onPressed: _translateBook,
+          tooltip: 'Translate',
+          child: const Icon(Icons.translate),
+        ),
+        const SizedBox(width: 10),
+        // 이전 챕터로 이동
+        FloatingActionButton(
+          heroTag: "prevChapter",
+          onPressed: () => _changeChapterIndex(-1),
+          tooltip: 'Previous Chapter',
+          child: const Icon(Icons.keyboard_double_arrow_left_rounded),
+        ),
+        const SizedBox(width: 10),
+        // 이전 콘텐츠로 이동
+        FloatingActionButton(
+          heroTag: "prev",
+          onPressed: () => _changeContentsIndex(-1),
+          tooltip: 'Previous Content',
+          child: const Icon(Icons.keyboard_arrow_left_rounded),
+        ),
+        const SizedBox(width: 10),
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 32,
+            ),
+            children: [
+              TextSpan(text: ' $_currContentsIdx'),
+              const TextSpan(
+                text: ' / ',
+              ),
+              TextSpan(
+                text: '${_maxContentsIdx - 1} ',
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        // 다음 콘텐츠로 이동
+        FloatingActionButton(
+          heroTag: "next",
+          onPressed: () => _changeContentsIndex(1),
+          tooltip: 'Next Content',
+          child: const Icon(Icons.keyboard_arrow_right_rounded),
+        ),
+        const SizedBox(width: 10),
+        // 다음 챕터로 이동
+        FloatingActionButton(
+          heroTag: "nextChapter",
+          onPressed: () => _changeChapterIndex(1),
+          tooltip: 'Next Chapter',
+          child: const Icon(Icons.keyboard_double_arrow_right_rounded),
+        ),
+      ],
     );
   }
 }
