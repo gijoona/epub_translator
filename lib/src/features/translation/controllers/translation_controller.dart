@@ -20,7 +20,7 @@ class TranslationController extends AsyncNotifier<String> {
     final currentState = state;
     EpubContentModel contentModel =
         ref.read(epubContentProvider.notifier).state!;
-    ref.read(translatedEpubContentsProvider.notifier).state = "";
+    ref.read(translatedEpubContentsProvider.notifier).state = [''];
 
     if (currentState is AsyncData<String>) {
       try {
@@ -91,12 +91,17 @@ class TranslationController extends AsyncNotifier<String> {
   }
 
   void refreshTranslatedEpubContentsProvider(String translatedContent) {
-    ref.read(translatedEpubContentsProvider.notifier).state +=
-        translatedContent;
+    var epubContentsList =
+        ref.read(translatedEpubContentsProvider.notifier).state;
+    epubContentsList.add(translatedContent);
+    ref.read(translatedEpubContentsProvider.notifier).state = [
+      ...epubContentsList
+    ];
   }
 }
 
-final translatedEpubContentsProvider = StateProvider<String>((ref) => '');
+final translatedEpubContentsProvider =
+    StateProvider<List<String>>((ref) => ['']);
 
 final translationControllerProvider =
     AsyncNotifierProvider<TranslationController, String>(
