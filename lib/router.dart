@@ -1,5 +1,6 @@
 import 'package:epub_translator/src/features/common/views/epub_screen.dart';
 import 'package:epub_translator/src/features/file_picker/views/file_picker_screen.dart';
+import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,9 +12,14 @@ final routerConfig = GoRouter(
       builder: (context, state) => const FilePickerScreen(),
     ),
     GoRoute(
-      path: EpubScreen.routerURL,
-      name: EpubScreen.routerName,
+      path: EpubScreen.routeURL,
+      name: EpubScreen.routeName,
       builder: (context, state) => const EpubScreen(),
+    ),
+    GoRoute(
+      path: SettingsScreen.routeURL,
+      name: SettingsScreen.routeName,
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

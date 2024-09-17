@@ -2,6 +2,7 @@ import 'package:epub_translator/src/features/common/views/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
+import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,14 @@ class FilePickerScreen extends ConsumerWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Selected EPUB File'),
+          actions: [
+            IconButton(
+              onPressed: () {
+                context.pushNamed(SettingsScreen.routeName);
+              },
+              icon: const Icon(Icons.settings),
+            ),
+          ],
         ),
         body: Center(
           child: ElevatedButton(
@@ -50,7 +59,7 @@ class FilePickerScreen extends ConsumerWidget {
                 }
 
                 // EPUB Reader 화면으로 이동
-                context.pushNamed(EpubScreen.routerName);
+                context.pushNamed(EpubScreen.routeName);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('No File Selected')),

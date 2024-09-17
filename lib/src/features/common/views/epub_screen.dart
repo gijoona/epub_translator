@@ -1,15 +1,17 @@
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
+import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
 import 'package:epub_translator/src/features/translation/views/epub_translation_screen.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class EpubScreen extends ConsumerStatefulWidget {
-  static const routerURL = '/epub';
-  static const routerName = 'epub';
+  static const routeURL = '/epub';
+  static const routeName = 'epub';
 
   const EpubScreen({super.key});
 
@@ -116,6 +118,14 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         appBar: AppBar(
           title: Text(caption),
           centerTitle: true,
+          actions: [
+            IconButton(
+              onPressed: () {
+                context.pushNamed(SettingsScreen.routeName);
+              },
+              icon: const Icon(Icons.settings),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           controller: _scrollController,

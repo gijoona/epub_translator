@@ -1,12 +1,16 @@
 import 'package:dart_openai/dart_openai.dart';
-import 'package:epub_translator/src/features/common/configs/env_config.dart';
+import 'package:epub_translator/src/db/provider/database_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TranslationService {
+  final String model;
   final String apiKey;
   final int maxTokens = 500;
 
-  TranslationService({required this.apiKey}) {
+  TranslationService({
+    required this.model,
+    required this.apiKey,
+  }) {
     OpenAI.apiKey = apiKey;
   }
 
@@ -68,7 +72,7 @@ class TranslationService {
 
     OpenAIChatCompletionModel chatCompletion =
         await OpenAI.instance.chat.create(
-      model: 'gpt-4o-mini',
+      model: model,
       messages: requestMessages,
       maxTokens: maxTokens,
     );
@@ -80,5 +84,12 @@ class TranslationService {
 }
 
 final translationServiceProvider = Provider(
-  (ref) => TranslationService(apiKey: ref.watch(envConfigProvider)),
+  (ref) {
+    final config = ref.watch(configProvider);
+
+    return TranslationService(
+      model: config['OPENAI_API_MODEL'] ?? '',
+      apiKey: config['OPENAI_API_KEY'] ?? '',
+    );
+  },
 );
