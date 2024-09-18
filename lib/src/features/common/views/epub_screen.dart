@@ -7,6 +7,7 @@ import 'package:epub_translator/src/features/translation/views/epub_translation_
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 class EpubScreen extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class EpubScreen extends ConsumerStatefulWidget {
 }
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
+  int _viewMode = 0;
   int _currContentsIdx = 0;
   int _maxContentsIdx = 1;
   late EpubBookModel? _book;
@@ -108,6 +110,25 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         .translateEpub(targetLanguage);
   }
 
+  void _changeView() {
+    var chageViewMode = 0;
+    switch (_viewMode) {
+      case 0:
+        chageViewMode = 1;
+        break;
+      case 1:
+        chageViewMode = 2;
+        break;
+      default:
+        chageViewMode = 0;
+        break;
+    }
+
+    setState(() {
+      _viewMode = chageViewMode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var bookInfo = ref.read(epubBookProvider.notifier).state;
@@ -119,6 +140,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           title: Text(caption),
           centerTitle: true,
           actions: [
+            IconButton(
+              onPressed: _changeView,
+              icon: const FaIcon(FontAwesomeIcons.tableColumns),
+            ),
             IconButton(
               onPressed: () {
                 context.pushNamed(SettingsScreen.routeName);
@@ -132,17 +157,19 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           child: Container(
             padding: const EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width,
-            child: const Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Flexible(
-                  flex: 1,
-                  child: EpubReaderScreen(),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: EpubTranslationScreen(),
-                ),
+                if (_viewMode == 0 || _viewMode == 1)
+                  const Flexible(
+                    flex: 1,
+                    child: EpubReaderScreen(),
+                  ),
+                if (_viewMode == 0 || _viewMode == 2)
+                  const Flexible(
+                    flex: 1,
+                    child: EpubTranslationScreen(),
+                  ),
               ],
             ),
           ),

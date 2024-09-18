@@ -54,7 +54,7 @@ class TranslationController extends AsyncNotifier<String> {
         var translatedSyntax = '';
         for (var paragraph in paragraphs) {
           var appendTranslatedSyntax = translatedSyntax + paragraph.outerHtml;
-          if (utf8.encode(appendTranslatedSyntax).length > 1000) {
+          if (utf8.encode(appendTranslatedSyntax).length > 1500) {
             String translatedParagraph =
                 await _translationService.translateText(
               translatedSyntax, // HTML 태그 포함한 단락 전체를 번역

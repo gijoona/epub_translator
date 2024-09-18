@@ -3,6 +3,7 @@ import 'package:epub_translator/src/features/epub_reader/controllers/epub_contro
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
+import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,8 @@ class FilePickerScreen extends ConsumerWidget {
                 await ref
                     .read(epubControllerProvider.notifier)
                     .loadEpub(filePath);
+                // 새로운 EPUB파일 로드 시 포함된 이미지 파일등의 정보가 변경되므로 이전 번역데이터 초기화.
+                ref.read(translatedEpubContentsProvider.notifier).state = [''];
                 var book = ref.read(epubBookProvider.notifier).state;
 
                 if (book != null) {

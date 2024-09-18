@@ -16,6 +16,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   // 각각의 설정 필드에 사용할 TextEditingController
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _apiKeyController = TextEditingController();
+  final TextEditingController _promptController = TextEditingController();
 
   // Form의 상태를 관리하는 GlobalKey
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -34,10 +35,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final config = ref.read(configProvider);
     final model = config['OPENAI_API_MODEL'];
     final apiKey = config['OPENAI_API_KEY'];
+    final prompt = config['TRANSLATION_PROMPT'];
 
     setState(() {
       _modelController.text = model ?? '';
       _apiKeyController.text = apiKey ?? '';
+      _promptController.text = prompt ?? '';
     });
   }
 
@@ -49,10 +52,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // 각 입력 필드에서 설정 값을 가져와 저장
       final model = _modelController.text;
       final apiKey = _apiKeyController.text;
+      final prompt = _promptController.text;
 
       if (model.isNotEmpty && apiKey.isNotEmpty) {
         configNotifier.saveConfig('OPENAI_API_MODEL', model);
         configNotifier.saveConfig('OPENAI_API_KEY', apiKey);
+        configNotifier.saveConfig('TRANSLATION_PROMPT', prompt);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('설정이 저장되었습니다.')),
@@ -70,6 +75,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void dispose() {
     _modelController.dispose();
     _apiKeyController.dispose();
+    _promptController.dispose();
     super.dispose();
   }
 
@@ -103,6 +109,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'API 키를 입력하세요.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                minLines: 10,
+                maxLines: 40,
+                controller: _promptController,
+                decoration:
+                    const InputDecoration(labelText: 'TRANSLATION PROMPT'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '번역 프롬프트를 입력하세요.';
                   }
                   return null;
                 },
