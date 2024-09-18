@@ -85,54 +85,57 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(
         title: const Text('설정 관리'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey, // Form의 상태를 관리하는 키
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _modelController,
-                decoration:
-                    const InputDecoration(labelText: 'OPENAI API MODEL'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '모델을 입력하세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: _apiKeyController,
-                decoration: const InputDecoration(labelText: 'OPENAI API KEY'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'API 키를 입력하세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              TextFormField(
-                minLines: 10,
-                maxLines: 40,
-                controller: _promptController,
-                decoration:
-                    const InputDecoration(labelText: 'TRANSLATION PROMPT'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '번역 프롬프트를 입력하세요.';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveSettings,
-                child: const Text('설정 저장'),
-              ),
-            ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey, // Form의 상태를 관리하는 키
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _modelController,
+                  decoration:
+                      const InputDecoration(labelText: 'OPENAI API MODEL'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '모델을 입력하세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _apiKeyController,
+                  decoration:
+                      const InputDecoration(labelText: 'OPENAI API KEY'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'API 키를 입력하세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  minLines: 10,
+                  maxLines: 40,
+                  controller: _promptController,
+                  decoration:
+                      const InputDecoration(labelText: 'TRANSLATION PROMPT'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '번역 프롬프트를 입력하세요.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _saveSettings,
+                  child: const Text('설정 저장'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

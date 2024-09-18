@@ -20,7 +20,7 @@ class _EpubTranslationScreenState extends ConsumerState<EpubTranslationScreen> {
     final translationEpubContents = ref.watch(translatedEpubContentsProvider);
 
     return SizedBox(
-      width: MediaQuery.of(context).size.width / 2,
+      width: MediaQuery.of(context).size.width,
       child: ListView.builder(
         shrinkWrap: true, // <==== limit height. 리스트뷰 크기 고정
         primary: false, // <====  disable scrolling. 리스트뷰 내부는 스크롤 안할거임
