@@ -62,6 +62,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('설정이 저장되었습니다.')),
         );
+        ref.watch(configProvider.notifier).loadAllConfigs();
       }
     } else {
       // 유효하지 않은 입력이 있을 경우

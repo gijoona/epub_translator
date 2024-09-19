@@ -152,10 +152,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           centerTitle: true,
           actions: [
             IconButton(
-              onPressed: _changeView,
-              icon: const FaIcon(FontAwesomeIcons.tableColumns),
-            ),
-            IconButton(
               onPressed: () {
                 context.pushNamed(SettingsScreen.routeName);
               },
@@ -166,6 +162,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         body: Stack(
           children: [
             SingleChildScrollView(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
               controller: _scrollController,
               child: Container(
                 padding: const EdgeInsets.all(10),
@@ -189,6 +186,27 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 ),
               ),
             ),
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Column(
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'changeView',
+                    onPressed: _changeView,
+                    tooltip: 'ChangeView',
+                    child: const FaIcon(FontAwesomeIcons.tableColumns),
+                  ),
+                  const SizedBox(height: 10),
+                  FloatingActionButton(
+                    heroTag: "translate",
+                    onPressed: _translateBook,
+                    tooltip: 'Translate',
+                    child: const Icon(Icons.translate),
+                  ),
+                ],
+              ),
+            ),
             if (_isTranslating)
               const Positioned(
                 top: 0,
@@ -209,14 +227,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // 번역 버튼
-        FloatingActionButton(
-          heroTag: "translate",
-          onPressed: _translateBook,
-          tooltip: 'Translate',
-          child: const Icon(Icons.translate),
-        ),
-        const SizedBox(width: 10),
         // 이전 챕터로 이동
         FloatingActionButton(
           heroTag: "prevChapter",
