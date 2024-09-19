@@ -10,6 +10,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
+/// 화면모드
+/// 0 : 원본/번역 둘다 표시
+/// 1 : 원본만 표시
+/// 2 : 번역만 표시
+enum EpubViewMode { both, original, translation }
+
 class EpubScreen extends ConsumerStatefulWidget {
   static const routeURL = '/epub';
   static const routeName = 'epub';
@@ -21,9 +27,10 @@ class EpubScreen extends ConsumerStatefulWidget {
 }
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
-  int _viewMode = 0;
+  EpubViewMode _viewMode = EpubViewMode.both;
   int _currContentsIdx = 0;
   int _maxContentsIdx = 1;
+  bool _isTranslating = false; // 번역 상태 플래그
   late EpubBookModel? _book;
   late EpubChapter? _chapter;
   final ScrollController _scrollController = ScrollController();
@@ -53,7 +60,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     loadEpubContents(_currContentsIdx);
 
     // 번역영역만 보여지는 상태에서 contents를 이동하면 자동으로 번역이 호출되도록 처리
-    if (_viewMode == 2) {
+    if (_viewMode == EpubViewMode.translation) {
       _translateBook();
     }
     setState(() {});
@@ -109,33 +116,27 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _translateBook() async {
+    if (_isTranslating) return; // 이미 번역 중일 경우 중복호출 방지
+
+    _isTranslating = true;
     const targetLanguage = 'ko'; // 예시로 한국어로 번역
-    await ref
-        .read(translationControllerProvider.notifier)
-        .translateEpub(targetLanguage);
+    setState(() {}); // 번역 시작 시 상태갱신
+
+    try {
+      await ref
+          .read(translationControllerProvider.notifier)
+          .translateEpub(targetLanguage);
+    } finally {
+      _isTranslating = false;
+      setState(() {}); // 번역 완료 시 상태갱신
+    }
   }
 
   void _changeView() {
-    /**
-     * 0 : 원본/번역 둘다 표시
-     * 1 : 원본만 표시
-     * 2 : 번역만 표시
-     */
-    var chageViewMode = 0;
-    switch (_viewMode) {
-      case 0:
-        chageViewMode = 1;
-        break;
-      case 1:
-        chageViewMode = 2;
-        break;
-      default:
-        chageViewMode = 0;
-        break;
-    }
-
+    // Enum 순환: both -> original -> translation -> both
     setState(() {
-      _viewMode = chageViewMode;
+      _viewMode = EpubViewMode
+          .values[(_viewMode.index + 1) % EpubViewMode.values.length];
     });
   }
 
@@ -162,27 +163,42 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          controller: _scrollController,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            width: MediaQuery.of(context).size.width,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (_viewMode == 0 || _viewMode == 1)
-                  const Flexible(
-                    flex: 1,
-                    child: EpubReaderScreen(),
-                  ),
-                if (_viewMode == 0 || _viewMode == 2)
-                  const Flexible(
-                    flex: 1,
-                    child: EpubTranslationScreen(),
-                  ),
-              ],
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_viewMode == EpubViewMode.both ||
+                        _viewMode == EpubViewMode.original)
+                      const Flexible(
+                        flex: 1,
+                        child: EpubReaderScreen(),
+                      ),
+                    if (_viewMode == EpubViewMode.both ||
+                        _viewMode == EpubViewMode.translation)
+                      const Flexible(
+                        flex: 1,
+                        child: EpubTranslationScreen(),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
+            if (_isTranslating)
+              const Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: LinearProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                ),
+              ),
+          ],
         ),
         floatingActionButton: _buildFAB(), // FAB 추가
       ),
