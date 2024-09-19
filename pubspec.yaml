@@ -46,6 +46,7 @@ dependencies:
   sqflite: ^2.3.3+1
   path: ^1.9.0
   font_awesome_flutter: ^10.7.0
+  sqflite_common_ffi: ^2.3.3
 
 dev_dependencies:
   flutter_test:

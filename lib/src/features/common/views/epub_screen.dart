@@ -51,6 +51,11 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     _currContentsIdx = chgContentsIdx;
 
     loadEpubContents(_currContentsIdx);
+
+    // 번역영역만 보여지는 상태에서 contents를 이동하면 자동으로 번역이 호출되도록 처리
+    if (_viewMode == 2) {
+      _translateBook();
+    }
     setState(() {});
   }
 
@@ -111,6 +116,11 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _changeView() {
+    /**
+     * 0 : 원본/번역 둘다 표시
+     * 1 : 원본만 표시
+     * 2 : 번역만 표시
+     */
     var chageViewMode = 0;
     switch (_viewMode) {
       case 0:

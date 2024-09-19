@@ -1,12 +1,24 @@
+import 'dart:io';
+
 import 'package:epub_translator/router.dart';
 import 'package:epub_translator/src/db/provider/database_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
+
+  // Only initialize sqflite_common_ffi for non-web platforms
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi; // Initialize the databasefactory
+  }
+
+  // run app here
   runApp(
     const ProviderScope(child: MyApp()),
   );
