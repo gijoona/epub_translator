@@ -274,13 +274,13 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           tooltip: 'Previous Content',
           child: const Icon(Icons.keyboard_arrow_left_rounded),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 5),
         RichText(
           text: TextSpan(
             style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: 32,
+              fontSize: 24,
             ),
             children: [
               TextSpan(text: ' $_currContentsIdx'),
@@ -293,7 +293,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ],
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 5),
         // 다음 콘텐츠로 이동
         FloatingActionButton(
           heroTag: "next",
