@@ -34,11 +34,25 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   late EpubBookModel? _book;
   late EpubChapter? _chapter;
   final ScrollController _scrollController = ScrollController();
+  double _scrollProgress = 0.0; // 스크롤 진행 상태
 
   @override
   void initState() {
     super.initState();
     loadEpubBook();
+
+    _scrollController.addListener(_updateScrollProgress);
+  }
+
+  void _updateScrollProgress() {
+    // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
+    if (_scrollController.hasClients &&
+        _scrollController.position.maxScrollExtent > 0) {
+      setState(() {
+        _scrollProgress = _scrollController.offset /
+            _scrollController.position.maxScrollExtent;
+      });
+    }
   }
 
   Future<void> loadEpubBook() async {
@@ -141,6 +155,13 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   @override
+  void dispose() {
+    _scrollController.removeListener(_updateScrollProgress);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var bookInfo = ref.read(epubBookProvider.notifier).state;
     var caption =
@@ -218,6 +239,15 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
               ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: LinearProgressIndicator(
+                value: _scrollProgress,
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+              ),
+            )
           ],
         ),
         floatingActionButton: _buildFAB(), // FAB 추가
