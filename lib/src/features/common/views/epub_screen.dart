@@ -7,6 +7,7 @@ import 'package:epub_translator/src/features/translation/views/epub_translation_
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,6 +32,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   int _currContentsIdx = 0;
   int _maxContentsIdx = 1;
   bool _isTranslating = false; // 번역 상태 플래그
+  bool _isVisibleFAB = false; // 기능버튼 Visible 플래그
   late EpubBookModel? _book;
   late EpubChapter? _chapter;
   final ScrollController _scrollController = ScrollController();
@@ -48,9 +50,11 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
     if (_scrollController.hasClients &&
         _scrollController.position.maxScrollExtent > 0) {
+      final currentScroll = _scrollController.offset;
+      final totalScroll = _scrollController.position.maxScrollExtent;
       setState(() {
-        _scrollProgress = _scrollController.offset /
-            _scrollController.position.maxScrollExtent;
+        _scrollProgress = (currentScroll / totalScroll)
+            .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
       });
     }
   }
@@ -154,6 +158,12 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     });
   }
 
+  void _toggleVisibleFAB() {
+    setState(() {
+      _isVisibleFAB = !_isVisibleFAB;
+    });
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_updateScrollProgress);
@@ -180,136 +190,196 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ),
           ],
         ),
-        body: Stack(
-          children: [
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
-              controller: _scrollController,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_viewMode == EpubViewMode.both ||
-                        _viewMode == EpubViewMode.original)
-                      const Flexible(
-                        flex: 1,
-                        child: EpubReaderScreen(),
-                      ),
-                    if (_viewMode == EpubViewMode.both ||
-                        _viewMode == EpubViewMode.translation)
-                      const Flexible(
-                        flex: 1,
-                        child: EpubTranslationScreen(),
-                      ),
-                  ],
+        body: GestureDetector(
+          onDoubleTap: _toggleVisibleFAB,
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
+                controller: _scrollController,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_viewMode == EpubViewMode.both ||
+                          _viewMode == EpubViewMode.original)
+                        const Flexible(
+                          flex: 1,
+                          child: EpubReaderScreen(),
+                        ),
+                      if (_viewMode == EpubViewMode.both ||
+                          _viewMode == EpubViewMode.translation)
+                        const Flexible(
+                          flex: 1,
+                          child: EpubTranslationScreen(),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Column(
-                children: [
-                  FloatingActionButton(
-                    heroTag: 'changeView',
-                    tooltip: 'ChangeView',
-                    onPressed: _changeView,
-                    child: const FaIcon(FontAwesomeIcons.tableColumns),
+              if (_isVisibleFAB)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Column(
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                          ),
+                          children: [
+                            TextSpan(text: ' $_currContentsIdx'),
+                            const TextSpan(
+                              text: ' / ',
+                            ),
+                            TextSpan(
+                              text: '${_maxContentsIdx - 1} ',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  FloatingActionButton(
-                    heroTag: "translate",
-                    tooltip: 'Translate',
-                    onPressed: _isTranslating ? null : _translateBook,
-                    child: _isTranslating
-                        ? const CircularProgressIndicator()
-                        : const Icon(Icons.translate),
+                ),
+              if (_isTranslating)
+                const Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
-                ],
-              ),
-            ),
-            if (_isTranslating)
-              const Positioned(
-                top: 0,
+                ),
+              Positioned(
+                bottom: 0,
                 left: 0,
                 right: 0,
                 child: LinearProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  value: _scrollProgress,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
-              ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: LinearProgressIndicator(
-                value: _scrollProgress,
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
-        floatingActionButton: _buildFAB(), // FAB 추가
+        bottomNavigationBar: _buildBottomAppBar(),
+        floatingActionButton: _buildSpeedDial(), // FAB 추가
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       ),
     );
   }
 
-  Widget _buildFAB() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+  Widget _buildSpeedDial() {
+    return SpeedDial(
+      heroTag: 'speed-dial-hero-tag',
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      spacing: 5,
+      childPadding: const EdgeInsets.all(5),
+      childrenButtonSize: const Size(56.0, 56.0),
+      buttonSize: const Size(56.0, 56.0),
+      spaceBetweenChildren: 5,
+      closeManually: true,
+      visible: _isVisibleFAB,
+      elevation: 8.0,
+      animationCurve: Curves.elasticInOut,
       children: [
-        // 이전 챕터로 이동
-        FloatingActionButton(
-          heroTag: "prevChapter",
-          onPressed: () => _changeChapterIndex(-1),
-          tooltip: 'Previous Chapter',
-          child: const Icon(Icons.keyboard_double_arrow_left_rounded),
+        // 번역
+        SpeedDialChild(
+          onTap: _isTranslating ? null : _translateBook,
+          label: 'Translate',
+          child: _isTranslating
+              ? const CircularProgressIndicator()
+              : const Icon(Icons.translate),
         ),
-        const SizedBox(width: 10),
-        // 이전 콘텐츠로 이동
-        FloatingActionButton(
-          heroTag: "prev",
-          onPressed: () => _changeContentsIndex(-1),
-          tooltip: 'Previous Content',
-          child: const Icon(Icons.keyboard_arrow_left_rounded),
-        ),
-        const SizedBox(width: 10),
-        RichText(
-          text: TextSpan(
-            style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 32,
-            ),
-            children: [
-              TextSpan(text: ' $_currContentsIdx'),
-              const TextSpan(
-                text: ' / ',
-              ),
-              TextSpan(
-                text: '${_maxContentsIdx - 1} ',
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        // 다음 콘텐츠로 이동
-        FloatingActionButton(
-          heroTag: "next",
-          onPressed: () => _changeContentsIndex(1),
-          tooltip: 'Next Content',
-          child: const Icon(Icons.keyboard_arrow_right_rounded),
-        ),
-        const SizedBox(width: 10),
-        // 다음 챕터로 이동
-        FloatingActionButton(
-          heroTag: "nextChapter",
-          onPressed: () => _changeChapterIndex(1),
-          tooltip: 'Next Chapter',
-          child: const Icon(Icons.keyboard_double_arrow_right_rounded),
+        // 화면분할모드 변경
+        SpeedDialChild(
+          onTap: _changeView,
+          label: 'ChangeView',
+          child: const FaIcon(FontAwesomeIcons.tableColumns),
         ),
       ],
+    );
+  }
+
+  // BottomAppBar로 챕터 및 콘텐츠 이동 처리
+  Widget _buildBottomAppBar() {
+    return LayoutBuilder(
+      builder: (context, constraints) => BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        child: Row(
+          children: [
+            // BottomAppBar를 4등분하여 각 부분을 탭할 때마다 챕터/콘텐츠 이동
+            _buildBottomAppBarButton(
+              width: constraints.maxWidth / 4,
+              height: constraints.maxHeight,
+              icon: Icons.keyboard_double_arrow_left_rounded,
+              tooltip: 'Previous Chapter',
+              onTap: () => _changeChapterIndex(-1),
+            ),
+            _buildDivider(),
+            _buildBottomAppBarButton(
+              width: constraints.maxWidth / 4,
+              height: constraints.maxHeight,
+              icon: Icons.keyboard_arrow_left_rounded,
+              tooltip: 'Previous Content',
+              onTap: () => _changeContentsIndex(-1),
+            ),
+            _buildDivider(),
+            _buildBottomAppBarButton(
+              width: constraints.maxWidth / 4,
+              height: constraints.maxHeight,
+              icon: Icons.keyboard_arrow_right_rounded,
+              tooltip: 'Next Content',
+              onTap: () => _changeContentsIndex(1),
+            ),
+            _buildDivider(),
+            _buildBottomAppBarButton(
+              width: constraints.maxWidth / 4,
+              height: constraints.maxHeight,
+              icon: Icons.keyboard_double_arrow_right_rounded,
+              tooltip: 'Next Chapter',
+              onTap: () => _changeChapterIndex(1),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // BottomAppBar 버튼
+  Widget _buildBottomAppBarButton({
+    required double width,
+    required double height,
+    required IconData icon,
+    required String tooltip,
+    required Function onTap,
+  }) {
+    return GestureDetector(
+      onTap: () => onTap(),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.transparent,
+        ),
+        width: width - 10,
+        height: height,
+        child: Icon(icon, size: 30),
+      ),
+    );
+  }
+
+  // Divider 추가
+  Widget _buildDivider() {
+    return VerticalDivider(
+      color: Colors.grey.shade400,
+      thickness: 1,
+      width: 1,
     );
   }
 }
