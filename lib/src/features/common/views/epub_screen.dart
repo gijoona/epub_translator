@@ -193,16 +193,18 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 children: [
                   FloatingActionButton(
                     heroTag: 'changeView',
-                    onPressed: _changeView,
                     tooltip: 'ChangeView',
+                    onPressed: _changeView,
                     child: const FaIcon(FontAwesomeIcons.tableColumns),
                   ),
                   const SizedBox(height: 10),
                   FloatingActionButton(
                     heroTag: "translate",
-                    onPressed: _translateBook,
                     tooltip: 'Translate',
-                    child: const Icon(Icons.translate),
+                    onPressed: _isTranslating ? null : _translateBook,
+                    child: _isTranslating
+                        ? const CircularProgressIndicator()
+                        : const Icon(Icons.translate),
                   ),
                 ],
               ),
