@@ -207,18 +207,19 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                           _viewMode == EpubViewMode.original)
                         const Flexible(
                           flex: 1,
-                          child: EpubReaderScreen(),
+                          child: EpubReaderScreen(), // EPUB 원본
                         ),
                       if (_viewMode == EpubViewMode.both ||
                           _viewMode == EpubViewMode.translation)
                         const Flexible(
                           flex: 1,
-                          child: EpubTranslationScreen(),
+                          child: EpubTranslationScreen(), // EPUB 번역
                         ),
                     ],
                   ),
                 ),
               ),
+              // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
               if (_isVisibleFAB)
                 Positioned(
                   top: 10,
@@ -246,6 +247,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ],
                   ),
                 ),
+              // 번역 중임을 나타내는 LinearProgressIndicator
               if (_isTranslating)
                 const Positioned(
                   top: 0,
@@ -255,6 +257,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                 ),
+              // 스크롤 상태를 표시하는 LinearProgressIndicator
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -309,11 +312,12 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   // BottomAppBar로 챕터 및 콘텐츠 이동 처리
   Widget _buildBottomAppBar() {
-    return LayoutBuilder(
-      builder: (context, constraints) => BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: Row(
+    return BottomAppBar(
+      height: 44, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 8.0,
+      child: LayoutBuilder(
+        builder: (context, constraints) => Row(
           children: [
             // BottomAppBar를 4등분하여 각 부분을 탭할 때마다 챕터/콘텐츠 이동
             _buildBottomAppBarButton(
@@ -369,7 +373,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         ),
         width: width - 10,
         height: height,
-        child: Icon(icon, size: 30),
+        child: Icon(icon, size: 24),
       ),
     );
   }
