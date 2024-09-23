@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
+import 'package:epub_translator/src/features/epub_reader/services/epub_service.dart';
 import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
@@ -10,6 +13,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:flutter/src/widgets/image.dart' as Images;
 
 /// 화면모드
 /// 0 : 원본/번역 둘다 표시
@@ -171,6 +176,21 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     super.dispose();
   }
 
+  Widget appbarBackgroundImage() {
+    try {
+      final base64Image = ref.read(epubServiceProvider).getImageAsBase64(
+            _book!.images.keys.first,
+          );
+
+      return Images.Image.memory(
+        base64Decode(base64Image.split(',').last),
+        fit: BoxFit.cover,
+      );
+    } catch (err) {
+      return const Text('Error loading image');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var bookInfo = ref.read(epubBookProvider.notifier).state;
@@ -178,46 +198,87 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         bookInfo != null ? '${bookInfo.title} (${bookInfo.author})' : '';
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(caption),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                context.pushNamed(SettingsScreen.routeName);
-              },
-              icon: const Icon(Icons.settings),
-            ),
-          ],
-        ),
         body: GestureDetector(
           onDoubleTap: _toggleVisibleFAB,
           child: Stack(
             children: [
-              SingleChildScrollView(
-                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 60),
+              CustomScrollView(
                 controller: _scrollController,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (_viewMode == EpubViewMode.both ||
-                          _viewMode == EpubViewMode.original)
-                        const Flexible(
-                          flex: 1,
-                          child: EpubReaderScreen(), // EPUB 원본
+                slivers: [
+                  SliverAppBar(
+                    snap: true,
+                    floating: true,
+                    stretch: true,
+                    expandedHeight: 300.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      stretchModes: const [
+                        StretchMode.blurBackground,
+                        StretchMode.zoomBackground,
+                      ],
+                      centerTitle: true,
+                      title: Text(
+                        caption,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                         ),
-                      if (_viewMode == EpubViewMode.both ||
-                          _viewMode == EpubViewMode.translation)
-                        const Flexible(
-                          flex: 1,
-                          child: EpubTranslationScreen(), // EPUB 번역
-                        ),
+                      ),
+                      background: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          appbarBackgroundImage(),
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment(0.0, 0.5),
+                                end: Alignment.center,
+                                colors: <Color>[
+                                  Color(0x60000000),
+                                  Color(0x00000000),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          context.pushNamed(SettingsScreen.routeName);
+                        },
+                        icon: const Icon(Icons.settings),
+                      ),
                     ],
                   ),
-                ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        top: 10,
+                        left: 30,
+                        right: 30,
+                        bottom: 60,
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_viewMode == EpubViewMode.both ||
+                              _viewMode == EpubViewMode.original)
+                            const Flexible(
+                              flex: 1,
+                              child: EpubReaderScreen(), // EPUB 원본
+                            ),
+                          if (_viewMode == EpubViewMode.both ||
+                              _viewMode == EpubViewMode.translation)
+                            const Flexible(
+                              flex: 1,
+                              child: EpubTranslationScreen(), // EPUB 번역
+                            ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               ),
               // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
               if (_isVisibleFAB)
