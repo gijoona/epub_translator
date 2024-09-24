@@ -206,10 +206,9 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 controller: _scrollController,
                 slivers: [
                   SliverAppBar(
-                    snap: true,
+                    snap: false,
                     floating: true,
                     stretch: true,
-                    expandedHeight: 300.0,
                     flexibleSpace: FlexibleSpaceBar(
                       stretchModes: const [
                         StretchMode.blurBackground,
