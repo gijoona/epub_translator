@@ -373,7 +373,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   // BottomAppBar로 챕터 및 콘텐츠 이동 처리
   Widget _buildBottomAppBar() {
     return BottomAppBar(
-      height: 44, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
+      height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: LayoutBuilder(
@@ -431,9 +431,9 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
-        width: width - 10,
+        width: width - 3,
         height: height,
-        child: Icon(icon, size: 24),
+        child: Icon(icon, size: 30),
       ),
     );
   }
