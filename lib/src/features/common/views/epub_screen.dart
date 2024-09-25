@@ -33,7 +33,7 @@ class EpubScreen extends ConsumerStatefulWidget {
 }
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
-  EpubViewMode _viewMode = EpubViewMode.both;
+  EpubViewMode _viewMode = EpubViewMode.original;
   int _currContentsIdx = 0;
   int _maxContentsIdx = 1;
   bool _isTranslating = false; // 번역 상태 플래그

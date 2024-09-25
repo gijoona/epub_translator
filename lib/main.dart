@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:epub_translator/router.dart';
@@ -6,44 +7,68 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() async {
+Future<void> initializeApp() async {
+  // 환경 변수 로드
   await dotenv.load(fileName: ".env");
 
-  // Only initialize sqflite_common_ffi for non-web platforms
+  // 데이터베이스 초기화 - Only initialize sqflite_common_ffi for non-web platforms
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi; // Initialize the databasefactory
   }
+}
 
-  // run app here
-  runApp(
-    const ProviderScope(child: MyApp()),
-  );
+void main() async {
+  // Flutter의 시스템 위젯이 완전히 초기화되도록 보장
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    // Heavy 작업을 백그라운드에서 처리
+    await compute((msg) => initializeApp, null);
+
+    // run app here
+    runApp(
+      const ProviderScope(child: MyApp()),
+    );
+  } catch (err, stacktrace) {
+    debugPrint('Error initializing app: $err');
+    debugPrintStack(stackTrace: stacktrace);
+  }
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+  final bool _debugShowCheckedModeBanner = false;
+  final String _title = 'EPUB Translator';
 
-  GoRouter loadAppInfo(WidgetRef ref) {
-    // OpenAI API MODEL 및 API KEY 불러오기
-    ref.watch(configProvider.notifier).loadAllConfigs();
-    return ref.watch(routerProvider);
-  }
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final goRouterConf = loadAppInfo(ref);
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: goRouterConf,
-      title: 'EPUB Translator',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
+    return FutureBuilder(
+      future: ref.watch(configProvider.notifier).loadAllConfigs(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // 초기화 작업이 완료될 때까지 로딩 화면 표시
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+          );
+        }
+
+        // 설정이 완료된 후에 앱을 정상적으로 실행
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: _debugShowCheckedModeBanner,
+          routerConfig: ref.watch(routerProvider),
+          title: _title,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: true,
+          ),
+        );
+      },
     );
   }
 }

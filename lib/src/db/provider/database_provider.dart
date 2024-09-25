@@ -30,7 +30,7 @@ class ConfigNotifier extends StateNotifier<Map<String, String?>> {
     state = newState; // 상태 업데이트
   }
 
-  // 전체 설정 정보 불러오기 (디버깅용)
+  // 전체 설정 정보 불러오기 - App initialize
   Future<void> loadAllConfigs() async {
     final allConfigs = await dbHelper.getAllConfigs();
     final Map<String, String?> configsMap = {
