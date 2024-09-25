@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
-import 'package:epub_translator/src/features/epub_reader/services/epub_service.dart';
 import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
@@ -13,8 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:flutter/src/widgets/image.dart' as Images;
 import 'package:marquee/marquee.dart';
 
 /// 화면모드
