@@ -120,17 +120,15 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       contentFile: _book!.contents[currContentKey]!,
     );
 
-    _scrollPositionReset();
+    _setScrollPosition();
   }
 
-  void _scrollPositionReset() {
+  /// 스크롤 위치를 변경한다.
+  /// offset을 지정하지 않으면 스크롤을 제일 위로 옮긴다.
+  void _setScrollPosition({double offset = 0.0}) {
     // 스크롤을 제일 위로 올리는 코드
     if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        0,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _scrollController.jumpTo(offset);
     }
   }
 
@@ -163,6 +161,16 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     setState(() {
       _isVisibleFAB = !_isVisibleFAB;
     });
+  }
+
+  // 스크롤 진행상태를 표시하는 LinearProgressIndicator에 수평 스와이프 제스처 추가 (수평 스와이프 시 스크롤 이동)
+  void _handleHorizontalSwipe(DragUpdateDetails details) {
+    var currPositionPercent =
+        (details.localPosition.dx / MediaQuery.of(context).size.width)
+            .clamp(0.0, 1.0);
+    var jumpScrollOffset =
+        (_scrollController.position.maxScrollExtent * currPositionPercent);
+    _setScrollPosition(offset: jumpScrollOffset);
   }
 
   @override
@@ -292,9 +300,17 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                child: LinearProgressIndicator(
-                  value: _scrollProgress,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                child: GestureDetector(
+                  onHorizontalDragUpdate: _handleHorizontalSwipe,
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: LinearProgressIndicator(
+                      value: _scrollProgress,
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.blue),
+                    ),
+                  ),
                 ),
               )
             ],
