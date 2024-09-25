@@ -57,7 +57,7 @@ class TranslationService {
 
 final translationServiceProvider = Provider(
   (ref) {
-    final config = ref.watch(configProvider);
+    final config = ref.watch(configProvider).value!;
 
     return TranslationService(
       model: config['OPENAI_API_MODEL'] ?? '',

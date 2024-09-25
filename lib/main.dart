@@ -58,13 +58,23 @@ class MyApp extends ConsumerWidget {
           );
         }
 
+        final config = ref.watch(configProvider);
+        var theme = '0';
+        if (config.hasValue) {
+          theme = config.value!['APP_THEMEMODE'] ?? '0';
+        }
+
         // 설정이 완료된 후에 앱을 정상적으로 실행
         return MaterialApp.router(
           debugShowCheckedModeBanner: _debugShowCheckedModeBanner,
           routerConfig: ref.watch(routerProvider),
           title: _title,
+          themeMode: ThemeMode.values.elementAt(int.parse(theme)),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+            useMaterial3: true,
+          ),
+          darkTheme: ThemeData.dark(
             useMaterial3: true,
           ),
         );
