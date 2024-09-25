@@ -300,7 +300,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: _buildBottomAppBar(),
+        bottomNavigationBar: _isVisibleFAB ? _buildBottomAppBar() : null,
         floatingActionButton: _buildSpeedDial(), // FAB 추가
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
@@ -343,7 +343,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   // BottomAppBar로 챕터 및 콘텐츠 이동 처리
   Widget _buildBottomAppBar() {
     return BottomAppBar(
-      height: _isVisibleFAB ? 55 : 0, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
+      height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: LayoutBuilder(
