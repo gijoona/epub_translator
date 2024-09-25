@@ -199,7 +199,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     return SafeArea(
       child: Scaffold(
         body: GestureDetector(
-          onDoubleTap: _toggleVisibleFAB,
+          onTap: _toggleVisibleFAB,
           child: Stack(
             children: [
               CustomScrollView(
@@ -282,7 +282,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
               // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
               if (_isVisibleFAB)
                 Positioned(
-                  top: 10,
+                  top: 70,
                   right: 10,
                   child: Column(
                     children: [
@@ -373,7 +373,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   // BottomAppBar로 챕터 및 콘텐츠 이동 처리
   Widget _buildBottomAppBar() {
     return BottomAppBar(
-      height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
+      height: _isVisibleFAB ? 55 : 0, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
       child: LayoutBuilder(
