@@ -16,12 +16,13 @@ class EpubContentsRender extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bodyColor = Theme.of(context).textTheme.bodyLarge!.color;
     return Html(
       data: _currContents,
       style: {
         "body": Style(
           fontSize: FontSize(18.0),
-          lineHeight: const LineHeight(1.5),
+          lineHeight: const LineHeight(2),
         ),
         "h1": Style(
           fontWeight: FontWeight.bold,
@@ -60,14 +61,13 @@ class EpubContentsRender extends ConsumerWidget {
                           style: rbTextStyle,
                         ),
                         Positioned(
-                          top: 4,
                           child: Text(
                             rbTexts, // 한자 부분
-                            style: rbTextStyle.copyWith(color: Colors.black),
+                            style: rbTextStyle.copyWith(color: bodyColor),
                           ),
                         ),
                         Positioned(
-                          top: -8,
+                          top: -14,
                           child: Text(
                             rtTexts, // 후리가나 부분
                             style: const TextStyle(

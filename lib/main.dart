@@ -26,7 +26,7 @@ void main() async {
 
   try {
     // Heavy 작업을 백그라운드에서 처리
-    await compute((msg) => initializeApp, null);
+    await initializeApp();
 
     // run app here
     runApp(

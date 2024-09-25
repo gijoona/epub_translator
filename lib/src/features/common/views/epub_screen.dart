@@ -15,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:flutter/src/widgets/image.dart' as Images;
+import 'package:marquee/marquee.dart';
 
 /// 화면모드
 /// 0 : 원본/번역 둘다 표시
@@ -176,21 +177,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     super.dispose();
   }
 
-  Widget appbarBackgroundImage() {
-    try {
-      final base64Image = ref.read(epubServiceProvider).getImageAsBase64(
-            _book!.images.keys.first,
-          );
-
-      return Images.Image.memory(
-        base64Decode(base64Image.split(',').last),
-        fit: BoxFit.cover,
-      );
-    } catch (err) {
-      return const Text('Error loading image');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var bookInfo = ref.read(epubBookProvider.notifier).state;
@@ -215,29 +201,19 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                         StretchMode.zoomBackground,
                       ],
                       centerTitle: true,
-                      title: Text(
-                        caption,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                      title: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 12,
+                          right: 50,
+                          left: 50,
                         ),
-                      ),
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          appbarBackgroundImage(),
-                          const DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(0.0, 0.5),
-                                end: Alignment.center,
-                                colors: <Color>[
-                                  Color(0x60000000),
-                                  Color(0x00000000),
-                                ],
-                              ),
-                            ),
+                        child: Marquee(
+                          pauseAfterRound: const Duration(milliseconds: 5),
+                          text: caption,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
+                        ),
                       ),
                     ),
                     actions: [
@@ -288,11 +264,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     children: [
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 32,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge!
+                              .copyWith(fontSize: 28),
                           children: [
                             TextSpan(text: ' $_currContentsIdx'),
                             const TextSpan(
@@ -332,7 +307,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         ),
         bottomNavigationBar: _buildBottomAppBar(),
         floatingActionButton: _buildSpeedDial(), // FAB 추가
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
     );
   }
