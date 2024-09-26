@@ -163,8 +163,18 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     });
   }
 
+  void _handleContentsHorizontalSwipe(DragEndDetails details) {
+    if (details.primaryVelocity! < 0) {
+      // 왼쪽에서 오른쪽으로 스와이프 -> 다음 Contents
+      _changeContentsIndex(1);
+    } else if (details.primaryVelocity! > 0) {
+      // 오른쪽에서 왼쪽으로 스와이프 -> 이전 Contents
+      _changeContentsIndex(-1);
+    }
+  }
+
   // 스크롤 진행상태를 표시하는 LinearProgressIndicator에 수평 스와이프 제스처 추가 (수평 스와이프 시 스크롤 이동)
-  void _handleHorizontalSwipe(DragUpdateDetails details) {
+  void _handleScrollHorizontalSwipe(DragUpdateDetails details) {
     var currPositionPercent =
         (details.localPosition.dx / MediaQuery.of(context).size.width)
             .clamp(0.0, 1.0);
@@ -229,30 +239,33 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ],
                   ),
                   SliverToBoxAdapter(
-                    child: Container(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                        left: 30,
-                        right: 30,
-                        bottom: 60,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (_viewMode == EpubViewMode.both ||
-                              _viewMode == EpubViewMode.original)
-                            const Flexible(
-                              flex: 1,
-                              child: EpubReaderScreen(), // EPUB 원본
-                            ),
-                          if (_viewMode == EpubViewMode.both ||
-                              _viewMode == EpubViewMode.translation)
-                            const Flexible(
-                              flex: 1,
-                              child: EpubTranslationScreen(), // EPUB 번역
-                            ),
-                        ],
+                    child: GestureDetector(
+                      onHorizontalDragEnd: _handleContentsHorizontalSwipe,
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          left: 30,
+                          right: 30,
+                          bottom: 60,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (_viewMode == EpubViewMode.both ||
+                                _viewMode == EpubViewMode.original)
+                              const Flexible(
+                                flex: 1,
+                                child: EpubReaderScreen(), // EPUB 원본
+                              ),
+                            if (_viewMode == EpubViewMode.both ||
+                                _viewMode == EpubViewMode.translation)
+                              const Flexible(
+                                flex: 1,
+                                child: EpubTranslationScreen(), // EPUB 번역
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -301,7 +314,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 left: 0,
                 right: 0,
                 child: GestureDetector(
-                  onHorizontalDragUpdate: _handleHorizontalSwipe,
+                  onHorizontalDragUpdate: _handleScrollHorizontalSwipe,
                   child: Container(
                     color: Theme.of(context).primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 20),
