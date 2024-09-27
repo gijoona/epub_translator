@@ -21,6 +21,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final TextEditingController _apiKeyController = TextEditingController();
   final TextEditingController _promptController = TextEditingController();
   ThemeMode _themeMode = ThemeMode.system;
+  final List<bool> _isOpen = [true, false];
 
   // Form의 상태를 관리하는 GlobalKey
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -86,20 +87,28 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<bool> isOpen = [false, false];
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('설정 관리'),
+        actions: [
+          IconButton(
+            tooltip: '설정 저장',
+            onPressed: _saveSettings,
+            icon: const FaIcon(FontAwesomeIcons.check),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: ExpansionPanelList(
+            elevation: 0,
             children: [
               ExpansionPanel(
-                headerBuilder: (context, isExpanded) =>
-                    const Text('THEME MODE'),
+                headerBuilder: (context, isExpanded) => const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text('THEME MODE'),
+                ),
                 body: SegmentedButton(
                   segments: const [
                     ButtonSegment<ThemeMode>(
@@ -128,48 +137,47 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     });
                   },
                 ),
-                isExpanded: true,
+                isExpanded: _isOpen[0],
               ),
               ExpansionPanel(
-                headerBuilder: (context, isExpanded) =>
-                    const Text('OPENAI API'),
+                headerBuilder: (context, isExpanded) => const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text('OPENAI API'),
+                ),
                 body: Form(
                   key: _formKey, // Form의 상태를 관리하는 키
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: _modelController,
-                        decoration: const InputDecoration(
-                            labelText: 'OPENAI API MODEL'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _apiKeyController,
-                        decoration:
-                            const InputDecoration(labelText: 'OPENAI API KEY'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        minLines: 10,
-                        maxLines: 40,
-                        controller: _promptController,
-                        decoration: const InputDecoration(
-                            labelText: 'TRANSLATION PROMPT'),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: _saveSettings,
-                        child: const Text('설정 저장'),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _modelController,
+                          decoration: const InputDecoration(
+                              labelText: 'OPENAI API MODEL'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: _apiKeyController,
+                          decoration: const InputDecoration(
+                              labelText: 'OPENAI API KEY'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          minLines: 10,
+                          maxLines: 40,
+                          controller: _promptController,
+                          decoration: const InputDecoration(
+                              labelText: 'TRANSLATION PROMPT'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                isExpanded: true,
+                isExpanded: _isOpen[1],
               ),
             ],
-            expansionCallback: (i, isExpanded) => setState(() {
-              isOpen[i] = !isExpanded;
-            }),
+            expansionCallback: (i, isOpen) =>
+                setState(() => _isOpen[i] = isOpen),
           ),
         ),
       ),
