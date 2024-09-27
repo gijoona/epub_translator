@@ -3,12 +3,14 @@ import 'package:epub_translator/src/db/provider/database_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TranslationService {
+  final String targetLang;
   final String model;
   final String apiKey;
   final String prompt;
   final int maxTokens = 1000;
 
   TranslationService({
+    required this.targetLang,
     required this.model,
     required this.apiKey,
     required this.prompt,
@@ -16,7 +18,7 @@ class TranslationService {
     OpenAI.apiKey = apiKey;
   }
 
-  Future<String> translateText(String context, String targetLanguage) async {
+  Future<String> translateText(String context) async {
     OpenAI.requestsTimeOut = const Duration(minutes: 10);
 
     // Assistant에게 대화의 방향성을 알려주는 메시지
@@ -31,7 +33,7 @@ class TranslationService {
     final userMessage = OpenAIChatCompletionChoiceMessageModel(
       content: [
         OpenAIChatCompletionChoiceMessageContentItemModel.text(
-          'Translate the following text to $targetLanguage: $context',
+          'Translate the following text to $targetLang: $context',
         ),
       ],
       role: OpenAIChatMessageRole.user,
@@ -57,12 +59,14 @@ class TranslationService {
 
 final translationServiceProvider = Provider(
   (ref) {
-    final config = ref.watch(configProvider).value!;
+    final config = ref.watch(configProvider);
+    final options = config.value!;
 
     return TranslationService(
-      model: config['OPENAI_API_MODEL'] ?? '',
-      apiKey: config['OPENAI_API_KEY'] ?? '',
-      prompt: config['TRANSLATION_PROMPT'] ?? '',
+      targetLang: options['TRANSLATION_LANGUAGE'] ?? 'ko',
+      model: options['OPENAI_API_MODEL'] ?? '',
+      apiKey: options['OPENAI_API_KEY'] ?? '',
+      prompt: options['TRANSLATION_PROMPT'] ?? '',
     );
   },
 );

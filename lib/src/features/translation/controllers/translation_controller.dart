@@ -12,11 +12,11 @@ class TranslationController extends AsyncNotifier<String> {
 
   @override
   FutureOr<String> build() {
-    _translationService = ref.read(translationServiceProvider);
+    _translationService = ref.watch(translationServiceProvider);
     return '';
   }
 
-  Future<void> translateEpub(String targetLanguage) async {
+  Future<void> translateEpub() async {
     final currentState = state;
     EpubContentModel contentModel =
         ref.read(epubContentProvider.notifier).state!;
@@ -58,7 +58,6 @@ class TranslationController extends AsyncNotifier<String> {
             String translatedParagraph =
                 await _translationService.translateText(
               translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
-              targetLanguage,
             );
             translatedParagraphs.add(translatedParagraph);
             refreshTranslatedEpubContentsProvider(translatedParagraph);
@@ -72,7 +71,6 @@ class TranslationController extends AsyncNotifier<String> {
         if (translatedSyntax.isNotEmpty) {
           String translatedParagraph = await _translationService.translateText(
             translatedSyntax,
-            targetLanguage,
           );
           translatedParagraphs.add(translatedParagraph);
           refreshTranslatedEpubContentsProvider(translatedParagraph);

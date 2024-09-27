@@ -20,8 +20,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final TextEditingController _modelController = TextEditingController();
   final TextEditingController _apiKeyController = TextEditingController();
   final TextEditingController _promptController = TextEditingController();
-  ThemeMode _themeMode = ThemeMode.system;
-  final List<bool> _isOpen = [true, false];
+  var _themeMode = ThemeMode.system;
+  var _targetLanguage = 'ko';
+  final List<bool> _isOpen = [true, true, false];
 
   // Form의 상태를 관리하는 GlobalKey
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -37,12 +38,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     // OpenAI API MODEL 및 API KEY 불러오기
     final config = ref.read(configProvider).value!;
     final theme = config['APP_THEMEMODE'] ?? '0';
+    final language = config['TRANSLATION_LANGUAGE'] ?? 'ko';
     final model = config['OPENAI_API_MODEL'];
     final apiKey = config['OPENAI_API_KEY'];
     final prompt = config['TRANSLATION_PROMPT'];
 
     setState(() {
       _themeMode = ThemeMode.values.elementAt(int.parse(theme));
+      _targetLanguage = language;
       _modelController.text = model ?? '';
       _apiKeyController.text = apiKey ?? '';
       _promptController.text = prompt ?? '';
@@ -56,11 +59,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       // 각 입력 필드에서 설정 값을 가져와 저장
       final theme = _themeMode.index.toString();
+      final language = _targetLanguage;
       final model = _modelController.text;
       final apiKey = _apiKeyController.text;
       final prompt = _promptController.text;
 
       configNotifier.saveConfig('APP_THEMEMODE', theme);
+      configNotifier.saveConfig('TRANSLATION_LANGUAGE', language);
       configNotifier.saveConfig('OPENAI_API_MODEL', model);
       configNotifier.saveConfig('OPENAI_API_KEY', apiKey);
       configNotifier.saveConfig('TRANSLATION_PROMPT', prompt);
@@ -68,7 +73,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('설정이 저장되었습니다.')),
       );
-      ref.watch(configProvider.notifier).loadAllConfigs();
+      ref.read(configProvider.notifier).loadAllConfigs();
     } else {
       // 유효하지 않은 입력이 있을 경우
       ScaffoldMessenger.of(context).showSnackBar(
@@ -142,6 +147,41 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ExpansionPanel(
                 headerBuilder: (context, isExpanded) => const Padding(
                   padding: EdgeInsets.all(20),
+                  child: Text('TARGET LANGUAGE'),
+                ),
+                body: SegmentedButton(
+                  segments: const [
+                    ButtonSegment<String>(
+                      value: 'ko',
+                      label: Text('Korean'),
+                      icon: FaIcon(FontAwesomeIcons.circle),
+                    ),
+                    ButtonSegment<String>(
+                      value: 'ja',
+                      label: Text('Japanese'),
+                      icon: FaIcon(FontAwesomeIcons.circle),
+                    ),
+                    ButtonSegment<String>(
+                      value: 'en',
+                      label: Text('English'),
+                      icon: FaIcon(FontAwesomeIcons.circle),
+                    ),
+                  ],
+                  selected: {_targetLanguage},
+                  onSelectionChanged: (Set<String> newSelection) {
+                    setState(() {
+                      // By default there is only a single segment that can be
+                      // selected at one time, so its value is always the first
+                      // item in the selected set.
+                      _targetLanguage = newSelection.first;
+                    });
+                  },
+                ),
+                isExpanded: _isOpen[1],
+              ),
+              ExpansionPanel(
+                headerBuilder: (context, isExpanded) => const Padding(
+                  padding: EdgeInsets.all(20),
                   child: Text('OPENAI API'),
                 ),
                 body: Form(
@@ -173,7 +213,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                 ),
-                isExpanded: _isOpen[1],
+                isExpanded: _isOpen[2],
               ),
             ],
             expansionCallback: (i, isOpen) =>

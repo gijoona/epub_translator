@@ -136,13 +136,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     if (_isTranslating) return; // 이미 번역 중일 경우 중복호출 방지
 
     _isTranslating = true;
-    const targetLanguage = 'ko'; // 예시로 한국어로 번역
     setState(() {}); // 번역 시작 시 상태갱신
 
     try {
-      await ref
-          .read(translationControllerProvider.notifier)
-          .translateEpub(targetLanguage);
+      await ref.read(translationControllerProvider.notifier).translateEpub();
     } finally {
       _isTranslating = false;
       setState(() {}); // 번역 완료 시 상태갱신
