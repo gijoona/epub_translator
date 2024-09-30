@@ -18,17 +18,16 @@ class TranslationController extends AsyncNotifier<String> {
 
   Future<void> translateEpub() async {
     final currentState = state;
-    EpubContentModel contentModel =
-        ref.read(epubContentProvider.notifier).state!;
+    EpubContentModel epub = ref.read(epubContentProvider.notifier).state!;
     ref.read(translatedEpubContentsProvider.notifier).state = [''];
 
     if (currentState is AsyncData<String>) {
       try {
         // final book = currentState.value;
-        final chapterContent = contentModel.contentFile.Content;
+        final epubContent = epub.content.Content;
 
         // HTML 내용을 파싱하여 단락별로 나누기
-        final document = parse(chapterContent);
+        final document = parse(epubContent);
         String documentOuterHtml = document.outerHtml;
 
         // 일본 소설 번역 중 후리가나를 표현하기 위해 사용하는 ruby 태그는 번역이 안되므로 별도 처리.

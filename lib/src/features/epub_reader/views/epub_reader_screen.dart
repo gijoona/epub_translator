@@ -3,27 +3,23 @@ import 'package:epub_translator/src/features/epub_reader/models/epub_content_mod
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EpubReaderScreen extends ConsumerStatefulWidget {
+class EpubReaderScreen extends ConsumerWidget {
   static const routerURL = '/epubReader';
   static const routerName = 'epubReader';
 
+  final int contentsNum;
+
   const EpubReaderScreen({
     super.key,
+    required this.contentsNum,
   });
 
   @override
-  ConsumerState<EpubReaderScreen> createState() => _EpubReaderScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    var epub = ref.read(epubContentProvider.notifier).state;
 
-class _EpubReaderScreenState extends ConsumerState<EpubReaderScreen> {
-  @override
-  Widget build(BuildContext context) {
-    final contents = ref.watch(epubContentProvider);
-
-    return contents == null
-        ? const CircularProgressIndicator.adaptive()
-        : EpubContentsRender(
-            contents: '${contents.contentFile.Content}',
-          );
+    return EpubContentsRender(
+      contents: '${epub!.contents[contentsNum].Content}',
+    );
   }
 }

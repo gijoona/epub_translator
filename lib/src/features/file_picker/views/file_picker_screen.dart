@@ -50,14 +50,13 @@ class FilePickerScreen extends ConsumerWidget {
                 var book = ref.read(epubBookProvider.notifier).state;
 
                 if (book != null) {
-                  var currContentKey = book.contents.keys.elementAt(0);
                   ref.read(epubContentProvider.notifier).state =
                       EpubContentModel(
                     title: book.title,
                     author: book.author,
-                    chapter: book.chapters.first,
-                    contentKey: currContentKey,
-                    contentFile: book.contents[currContentKey]!,
+                    chapters: book.chapters,
+                    content: book.contents.values.first,
+                    contents: book.contents.values.toList(),
                   );
                 }
 
