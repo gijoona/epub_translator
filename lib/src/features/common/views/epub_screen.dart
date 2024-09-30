@@ -29,6 +29,8 @@ class EpubScreen extends ConsumerStatefulWidget {
 }
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
+  final PageController _pageController = PageController();
+
   EpubViewMode _viewMode = EpubViewMode.original;
   int _currContentsIdx = 0;
   int _maxContentsIdx = 1;
@@ -120,7 +122,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       contentFile: _book!.contents[currContentKey]!,
     );
 
-    _setScrollPosition();
+    _scrollProgress = 0.0;
   }
 
   /// 스크롤 위치를 변경한다.
@@ -160,16 +162,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     });
   }
 
-  void _handleContentsHorizontalSwipe(DragEndDetails details) {
-    if (details.primaryVelocity! < 0) {
-      // 왼쪽에서 오른쪽으로 스와이프 -> 다음 Contents
-      _changeContentsIndex(1);
-    } else if (details.primaryVelocity! > 0) {
-      // 오른쪽에서 왼쪽으로 스와이프 -> 이전 Contents
-      _changeContentsIndex(-1);
-    }
-  }
-
   // 스크롤 진행상태를 표시하는 LinearProgressIndicator에 수평 스와이프 제스처 추가 (수평 스와이프 시 스크롤 이동)
   void _handleScrollHorizontalSwipe(DragUpdateDetails details) {
     var currPositionPercent =
@@ -198,46 +190,52 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           onTap: _toggleVisibleFAB,
           child: Stack(
             children: [
-              CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  SliverAppBar(
-                    snap: false,
-                    floating: true,
-                    stretch: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      stretchModes: const [
-                        StretchMode.blurBackground,
-                        StretchMode.zoomBackground,
-                      ],
-                      centerTitle: true,
-                      title: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 12,
-                          right: 50,
-                          left: 50,
-                        ),
-                        child: Marquee(
-                          pauseAfterRound: const Duration(milliseconds: 5),
-                          text: caption,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+              PageView.builder(
+                controller: _pageController,
+                itemCount: _maxContentsIdx,
+                onPageChanged: (page) {
+                  _currContentsIdx = page;
+                  loadEpubContents(page);
+                  setState(() {});
+                },
+                itemBuilder: (context, index) => CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    SliverAppBar(
+                      snap: false,
+                      floating: true,
+                      stretch: true,
+                      flexibleSpace: FlexibleSpaceBar(
+                        stretchModes: const [
+                          StretchMode.blurBackground,
+                          StretchMode.zoomBackground,
+                        ],
+                        centerTitle: true,
+                        title: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 12,
+                            right: 50,
+                            left: 50,
+                          ),
+                          child: Marquee(
+                            pauseAfterRound: const Duration(milliseconds: 5),
+                            text: caption,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            context.pushNamed(SettingsScreen.routeName);
+                          },
+                          icon: const Icon(Icons.settings),
+                        ),
+                      ],
                     ),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          context.pushNamed(SettingsScreen.routeName);
-                        },
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                  ),
-                  SliverToBoxAdapter(
-                    child: GestureDetector(
-                      onHorizontalDragEnd: _handleContentsHorizontalSwipe,
+                    SliverToBoxAdapter(
                       child: Container(
                         padding: const EdgeInsets.only(
                           top: 10,
@@ -264,9 +262,9 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                           ],
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
               // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
               if (_isVisibleFAB)
