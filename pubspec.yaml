@@ -68,6 +68,8 @@ dev_dependencies:
 
 flutter_icons:
   ios: true
+  macos: true
+  windows: true
   image_path: "assets/icon/Ebook_Icon_1024x1024.png"  # 아이콘 파일의 경로
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
