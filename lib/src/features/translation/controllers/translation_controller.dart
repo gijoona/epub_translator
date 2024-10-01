@@ -62,7 +62,10 @@ class TranslationController extends AsyncNotifier<String> {
             translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
           );
           translatedParagraphs.add(translatedParagraph);
-          // refreshTranslatedEpubContentsProvider(translatedParagraph);
+
+          epubTranslates['$currContentNum'] = translatedParagraphs;
+          refreshTranslatedEpubContentsProvider(epub, epubTranslates);
+
           translatedSyntax = paragraph.outerHtml; // 현재 단락을 새로 시작
         } else {
           translatedSyntax = appendTranslatedSyntax; // 단락 누적
@@ -75,14 +78,10 @@ class TranslationController extends AsyncNotifier<String> {
           translatedSyntax,
         );
         translatedParagraphs.add(translatedParagraph);
-        // refreshTranslatedEpubContentsProvider(translatedParagraph);
+
+        epubTranslates['$currContentNum'] = translatedParagraphs;
+        refreshTranslatedEpubContentsProvider(epub, epubTranslates);
       }
-
-      epubTranslates['$currContentNum'] = translatedParagraphs;
-
-      ref.read(epubContentProvider.notifier).state = epub.copyWith(
-        translates: epubTranslates,
-      );
 
       // 번역된 단락들을 결합하여 새로운 챕터 내용 구성
       final translatedContent = translatedParagraphs.join();
@@ -93,6 +92,15 @@ class TranslationController extends AsyncNotifier<String> {
       // 에러 발생 시 에러 상태로 업데이트
       state = AsyncValue.error(err, StackTrace.fromString(err.toString()));
     }
+  }
+
+  void refreshTranslatedEpubContentsProvider(
+    EpubContentModel epub,
+    Map<String, List<String>> epubTranslates,
+  ) {
+    ref.read(epubContentProvider.notifier).state = epub.copyWith(
+      translates: epubTranslates,
+    );
   }
 }
 
