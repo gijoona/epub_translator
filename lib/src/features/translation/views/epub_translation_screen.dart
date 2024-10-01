@@ -1,5 +1,5 @@
 import 'package:epub_translator/src/features/common/widgets/epub_contents_render.dart';
-import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
+import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,9 @@ class EpubTranslationScreen extends ConsumerStatefulWidget {
 class _EpubTranslationScreenState extends ConsumerState<EpubTranslationScreen> {
   @override
   Widget build(BuildContext context) {
-    final translationEpubContents = ref.watch(translatedEpubContentsProvider);
+    final epub = ref.watch(epubContentProvider);
+    final translationEpubContents =
+        epub?.translates?['${epub.currContentNum}'] ?? <String>[];
 
     return SizedBox(
       width: MediaQuery.of(context).size.width,

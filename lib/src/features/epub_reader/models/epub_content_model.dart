@@ -9,6 +9,7 @@ class EpubContentModel {
   final int currContentNum;
   final EpubTextContentFile content;
   final List<EpubTextContentFile> contents;
+  final Map<String, List<String>>? translates;
 
   EpubContentModel({
     required this.title,
@@ -18,6 +19,7 @@ class EpubContentModel {
     this.currContentNum = 0,
     required this.content,
     required this.contents,
+    this.translates,
   });
 
   EpubContentModel copyWith({
@@ -25,18 +27,20 @@ class EpubContentModel {
     String? author,
     EpubChapter? chapter,
     List<EpubChapter>? chapters,
-    int currContentNum = 0,
+    int? currContentNum,
     EpubTextContentFile? content,
     List<EpubTextContentFile>? contents,
+    Map<String, List<String>>? translates,
   }) {
     return EpubContentModel(
       title: title ?? this.title,
       author: author ?? this.author,
       chapter: chapter ?? this.chapter,
       chapters: chapters ?? this.chapters,
-      currContentNum: currContentNum,
+      currContentNum: currContentNum ?? this.currContentNum,
       content: content ?? this.content,
       contents: contents ?? this.contents,
+      translates: translates ?? this.translates,
     );
   }
 }
