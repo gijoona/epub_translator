@@ -15,6 +15,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /// 2 : 번역만 표시
 enum EpubViewMode { both, original, translation }
 
+// 스크롤 진행상황을 표시
+final scrollProgressProvider = StateProvider((ref) => 0.0);
+
 class EpubScreen extends ConsumerStatefulWidget {
   static const routeURL = '/epub';
   static const routeName = 'epub';
@@ -27,7 +30,6 @@ class EpubScreen extends ConsumerStatefulWidget {
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
   final PageController _pageController = PageController();
-  // final ScrollController _scrollController = ScrollController();
 
   EpubViewMode _viewMode = EpubViewMode.original;
   int _maxContentsIdx = 1;
@@ -35,34 +37,26 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   bool _isVisibleFAB = false; // 기능버튼 Visible 플래그
   late EpubBookModel? _book;
   EpubChapter? _chapter;
-  // double _scrollProgress = 0.0; // 스크롤 진행 상태
 
   @override
   void initState() {
     super.initState();
     loadEpubBook();
-
-    // _scrollController.addListener(_updateScrollProgress);
   }
 
-  // void _updateScrollProgress() {
-  //   // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
-  //   if (_scrollController.hasClients &&
-  //       _scrollController.position.maxScrollExtent > 0) {
-  //     final currentScroll = _scrollController.offset;
-  //     final totalScroll = _scrollController.position.maxScrollExtent;
-  //     setState(() {
-  //       _scrollProgress = (currentScroll / totalScroll)
-  //           .clamp(0.0, 1.0); // Ensure progress is between 0 and 1
-  //     });
-  //   }
-  // }
+  void _onScrollUpdate(double offset, double maxScrollExtent) {
+    // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
+    final currentScroll = offset;
+    final totalScroll = maxScrollExtent;
+
+    var scrollProgress = (currentScroll / totalScroll).clamp(0.0, 1.0);
+    ref.read(scrollProgressProvider.notifier).state = scrollProgress;
+  }
 
   Future<void> loadEpubBook() async {
     _book = ref.read(epubBookProvider.notifier).state;
     if (_book != null) {
       _maxContentsIdx = _book!.contents.length;
-      // _chapter = _book!.chapters.first;
     }
   }
 
@@ -81,6 +75,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         );
         break;
     }
+
+    ref.read(scrollProgressProvider.notifier).state = 0.0;
   }
 
   void _changeChapterIndex(int addIndex) {
@@ -112,16 +108,9 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.linear,
     );
-  }
 
-  /// 스크롤 위치를 변경한다.
-  /// offset을 지정하지 않으면 스크롤을 제일 위로 옮긴다.
-  // void _setScrollPosition({double offset = 0.0}) {
-  //   // 스크롤을 제일 위로 올리는 코드
-  //   if (_scrollController.hasClients) {
-  //     _scrollController.jumpTo(offset);
-  //   }
-  // }
+    ref.read(scrollProgressProvider.notifier).state = 0.0;
+  }
 
   void _translateBook() async {
     if (_isTranslating) return; // 이미 번역 중일 경우 중복호출 방지
@@ -173,8 +162,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   @override
   void dispose() {
     _pageController.dispose();
-    // _scrollController.removeListener(_updateScrollProgress);
-    // _scrollController.dispose();
     super.dispose();
   }
 
@@ -195,10 +182,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 onPageChanged: _onPageChanged,
                 itemBuilder: (context, contentsNum) {
                   return EpubContents(
-                    // scrollController: _scrollController,
                     caption: caption,
                     viewMode: _viewMode,
                     contentsNum: contentsNum,
+                    onScrollUpdate: _onScrollUpdate,
                   );
                 },
               ),
@@ -220,23 +207,25 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                   ),
                 ),
               // 스크롤 상태를 표시하는 LinearProgressIndicator
-              // Positioned(
-              //   bottom: 0,
-              //   left: 0,
-              //   right: 0,
-              //   child: GestureDetector(
-              //     onHorizontalDragUpdate: _handleScrollHorizontalSwipe,
-              //     child: Container(
-              //       color: Theme.of(context).primaryColor,
-              //       padding: const EdgeInsets.symmetric(vertical: 20),
-              //       child: LinearProgressIndicator(
-              //         value: _scrollProgress,
-              //         valueColor:
-              //             const AlwaysStoppedAnimation<Color>(Colors.blue),
-              //       ),
-              //     ),
-              //   ),
-              // )
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    var scrollProgress = ref.watch(scrollProgressProvider);
+                    return Container(
+                      color: Theme.of(context).primaryColor,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: LinearProgressIndicator(
+                        value: scrollProgress,
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(Colors.blue),
+                      ),
+                    );
+                  },
+                ),
+              )
             ],
           ),
         ),
