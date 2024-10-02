@@ -18,6 +18,8 @@ enum EpubViewMode { both, original, translation }
 // 스크롤 진행상황을 표시
 final scrollProgressProvider = StateProvider((ref) => 0.0);
 
+final visibleFABProvider = StateProvider((ref) => false);
+
 class EpubScreen extends ConsumerStatefulWidget {
   static const routeURL = '/epub';
   static const routeName = 'epub';
@@ -135,9 +137,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _toggleVisibleFAB() {
-    setState(() {
-      _isVisibleFAB = !_isVisibleFAB;
-    });
+    _isVisibleFAB = !_isVisibleFAB;
+    ref.read(visibleFABProvider.notifier).state = _isVisibleFAB;
   }
 
   // 스크롤 진행상태를 표시하는 LinearProgressIndicator에 수평 스와이프 제스처 추가 (수평 스와이프 시 스크롤 이동)
@@ -190,12 +191,16 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 },
               ),
               // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
-              if (_isVisibleFAB)
-                Positioned(
-                  top: 70,
-                  right: 10,
-                  child: EpubPageNum(maxContentsIdx: _maxContentsIdx),
-                ),
+              Consumer(builder: (context, ref, child) {
+                var isVisible = ref.watch(visibleFABProvider);
+                return !isVisible
+                    ? Container()
+                    : Positioned(
+                        top: 70,
+                        right: 10,
+                        child: EpubPageNum(maxContentsIdx: _maxContentsIdx),
+                      );
+              }),
               // 번역 중임을 나타내는 LinearProgressIndicator
               if (_isTranslating)
                 const Positioned(
@@ -229,7 +234,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: _isVisibleFAB ? _buildBottomAppBar() : null,
+        bottomNavigationBar: _buildBottomAppBar(),
         floatingActionButton: _buildSpeedDial(), // FAB 추가
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       ),
@@ -237,83 +242,93 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   Widget _buildSpeedDial() {
-    return SpeedDial(
-      heroTag: 'speed-dial-hero-tag',
-      icon: Icons.add,
-      activeIcon: Icons.close,
-      spacing: 5,
-      childPadding: const EdgeInsets.all(5),
-      childrenButtonSize: const Size(56.0, 56.0),
-      buttonSize: const Size(56.0, 56.0),
-      spaceBetweenChildren: 5,
-      closeManually: true,
-      visible: _isVisibleFAB,
-      elevation: 8.0,
-      animationCurve: Curves.elasticInOut,
-      children: [
-        // 번역
-        SpeedDialChild(
-          onTap: _isTranslating ? null : _translateBook,
-          label: 'Translate',
-          child: _isTranslating
-              ? const CircularProgressIndicator()
-              : const Icon(Icons.translate),
-        ),
-        // 화면분할모드 변경
-        SpeedDialChild(
-          onTap: _changeView,
-          label: 'ChangeView',
-          child: const FaIcon(FontAwesomeIcons.tableColumns),
-        ),
-      ],
-    );
+    return Consumer(builder: (context, ref, child) {
+      var isVislble = ref.watch(visibleFABProvider);
+      return !isVislble
+          ? const SizedBox(height: 0)
+          : SpeedDial(
+              heroTag: 'speed-dial-hero-tag',
+              icon: Icons.add,
+              activeIcon: Icons.close,
+              spacing: 5,
+              childPadding: const EdgeInsets.all(5),
+              childrenButtonSize: const Size(56.0, 56.0),
+              buttonSize: const Size(56.0, 56.0),
+              spaceBetweenChildren: 5,
+              closeManually: true,
+              // visible: ref.watch(visibleFABProvider),
+              elevation: 8.0,
+              animationCurve: Curves.elasticInOut,
+              children: [
+                // 번역
+                SpeedDialChild(
+                  onTap: _isTranslating ? null : _translateBook,
+                  label: 'Translate',
+                  child: _isTranslating
+                      ? const CircularProgressIndicator()
+                      : const Icon(Icons.translate),
+                ),
+                // 화면분할모드 변경
+                SpeedDialChild(
+                  onTap: _changeView,
+                  label: 'ChangeView',
+                  child: const FaIcon(FontAwesomeIcons.tableColumns),
+                ),
+              ],
+            );
+    });
   }
 
   // BottomAppBar로 챕터 및 콘텐츠 이동 처리
   Widget _buildBottomAppBar() {
-    return BottomAppBar(
-      height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8.0,
-      child: LayoutBuilder(
-        builder: (context, constraints) => Row(
-          children: [
-            // BottomAppBar를 4등분하여 각 부분을 탭할 때마다 챕터/콘텐츠 이동
-            _buildBottomAppBarButton(
-              width: constraints.maxWidth / 4,
-              height: constraints.maxHeight,
-              icon: Icons.keyboard_double_arrow_left_rounded,
-              tooltip: 'Previous Chapter',
-              onTap: () => _changeChapterIndex(-1),
-            ),
-            _buildDivider(),
-            _buildBottomAppBarButton(
-              width: constraints.maxWidth / 4,
-              height: constraints.maxHeight,
-              icon: Icons.keyboard_arrow_left_rounded,
-              tooltip: 'Previous Content',
-              onTap: () => _changeContentsIndex('prev'),
-            ),
-            _buildDivider(),
-            _buildBottomAppBarButton(
-              width: constraints.maxWidth / 4,
-              height: constraints.maxHeight,
-              icon: Icons.keyboard_arrow_right_rounded,
-              tooltip: 'Next Content',
-              onTap: () => _changeContentsIndex('next'),
-            ),
-            _buildDivider(),
-            _buildBottomAppBarButton(
-              width: constraints.maxWidth / 4,
-              height: constraints.maxHeight,
-              icon: Icons.keyboard_double_arrow_right_rounded,
-              tooltip: 'Next Chapter',
-              onTap: () => _changeChapterIndex(1),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Consumer(builder: (context, ref, child) {
+      var isVislble = ref.watch(visibleFABProvider);
+      return !isVislble
+          ? const SizedBox(height: 0)
+          : BottomAppBar(
+              height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
+              shape: const CircularNotchedRectangle(),
+              notchMargin: 8.0,
+              child: LayoutBuilder(
+                builder: (context, constraints) => Row(
+                  children: [
+                    // BottomAppBar를 4등분하여 각 부분을 탭할 때마다 챕터/콘텐츠 이동
+                    _buildBottomAppBarButton(
+                      width: constraints.maxWidth / 4,
+                      height: constraints.maxHeight,
+                      icon: Icons.keyboard_double_arrow_left_rounded,
+                      tooltip: 'Previous Chapter',
+                      onTap: () => _changeChapterIndex(-1),
+                    ),
+                    _buildDivider(),
+                    _buildBottomAppBarButton(
+                      width: constraints.maxWidth / 4,
+                      height: constraints.maxHeight,
+                      icon: Icons.keyboard_arrow_left_rounded,
+                      tooltip: 'Previous Content',
+                      onTap: () => _changeContentsIndex('prev'),
+                    ),
+                    _buildDivider(),
+                    _buildBottomAppBarButton(
+                      width: constraints.maxWidth / 4,
+                      height: constraints.maxHeight,
+                      icon: Icons.keyboard_arrow_right_rounded,
+                      tooltip: 'Next Content',
+                      onTap: () => _changeContentsIndex('next'),
+                    ),
+                    _buildDivider(),
+                    _buildBottomAppBarButton(
+                      width: constraints.maxWidth / 4,
+                      height: constraints.maxHeight,
+                      icon: Icons.keyboard_double_arrow_right_rounded,
+                      tooltip: 'Next Chapter',
+                      onTap: () => _changeChapterIndex(1),
+                    ),
+                  ],
+                ),
+              ),
+            );
+    });
   }
 
   // BottomAppBar 버튼
