@@ -18,6 +18,7 @@ class EpubContentsRender extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bodyColor = Theme.of(context).textTheme.bodyLarge!.color;
     return Html(
+      shrinkWrap: true,
       data: _currContents,
       style: {
         "body": Style(
