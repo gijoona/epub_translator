@@ -168,6 +168,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   void _onPageChanged(int page) {
     _contentScrollController = _getScrollController(page);
+    _onScrollUpdate(_contentScrollController.offset,
+        _contentScrollController.position.maxScrollExtent);
 
     var epubContent = ref.read(epubContentProvider.notifier).state;
     ref.read(epubContentProvider.notifier).state = epubContent!.copyWith(
