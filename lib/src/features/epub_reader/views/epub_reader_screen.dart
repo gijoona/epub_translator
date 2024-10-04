@@ -3,6 +3,8 @@ import 'package:epub_translator/src/features/epub_reader/models/epub_content_mod
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:html/parser.dart' show parse;
+
 class EpubReaderScreen extends ConsumerWidget {
   static const routerURL = '/epubReader';
   static const routerName = 'epubReader';
@@ -17,9 +19,10 @@ class EpubReaderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var epub = ref.read(epubContentProvider.notifier).state;
+    final contents = parse(epub!.contents[contentsNum].Content);
 
     return EpubContentsRender(
-      contents: '${epub!.contents[contentsNum].Content}',
+      contents: contents.outerHtml,
     );
   }
 }
