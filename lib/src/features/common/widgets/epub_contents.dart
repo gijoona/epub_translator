@@ -18,12 +18,14 @@ class EpubContents extends ConsumerStatefulWidget {
     required this.caption,
     required EpubViewMode viewMode,
     required this.contentsNum,
+    required this.scrollController,
     this.onScrollUpdate,
   }) : _viewMode = viewMode;
 
   final String caption;
   final EpubViewMode _viewMode;
   final int contentsNum;
+  final ScrollController scrollController;
   final ScrollUpdateCallback? onScrollUpdate;
 
   @override
@@ -31,11 +33,12 @@ class EpubContents extends ConsumerStatefulWidget {
 }
 
 class _EpubContentsState extends ConsumerState<EpubContents> {
-  final _scrollController = ScrollController();
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = widget.scrollController;
 
     _scrollController.addListener(_updateScrollProgress);
   }
@@ -43,19 +46,18 @@ class _EpubContentsState extends ConsumerState<EpubContents> {
   void _updateScrollProgress() {
     // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산
     if (_scrollController.hasClients &&
+        _scrollController.positions.length == 1 &&
         _scrollController.position.maxScrollExtent > 0) {
       final currentScroll = _scrollController.offset;
       final totalScroll = _scrollController.position.maxScrollExtent;
 
-      if (widget.onScrollUpdate != null) {
-        widget.onScrollUpdate!(currentScroll, totalScroll);
-      }
+      widget.onScrollUpdate?.call(currentScroll, totalScroll);
     }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController.removeListener(_updateScrollProgress);
     super.dispose();
   }
 
