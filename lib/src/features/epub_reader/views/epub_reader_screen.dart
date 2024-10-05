@@ -17,16 +17,18 @@ class EpubReaderScreen extends ConsumerWidget {
     required this.contentsNum,
   });
 
+  // 전체 내용을 한번에 그리면 버벅거리는 현상이 있으므로 ListView를 이용하여 처리하기 위해 내용을 byte단위로 짤라서 List로 처리.
   List<String> splitContentSection(EpubContentModel epub) {
     final contents = parse(epub.contents[contentsNum].Content);
     final elements = contents.querySelectorAll('body > div > *');
+    const contentSpliteByte = 3000;
 
     List<String> translatedParagraphs = [];
     var translatedSyntax = '';
 
     for (var paragraph in elements) {
       var appendTranslatedSyntax = translatedSyntax + paragraph.outerHtml;
-      if (utf8.encode(appendTranslatedSyntax).length > 1500) {
+      if (utf8.encode(appendTranslatedSyntax).length > contentSpliteByte) {
         translatedParagraphs.add(appendTranslatedSyntax);
         translatedSyntax = paragraph.outerHtml; // 현재 단락을 새로 시작
       } else {
