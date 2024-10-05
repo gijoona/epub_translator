@@ -36,7 +36,7 @@ class EpubReaderScreen extends ConsumerWidget {
       }
     }
 
-    // 마지막 번역되지 않은 텍스트 처리
+    // 마지막 남은 텍스트 처리
     if (translatedSyntax.isNotEmpty) {
       translatedParagraphs.add(translatedSyntax);
     }
