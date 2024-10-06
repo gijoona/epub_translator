@@ -53,13 +53,20 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     _contentScrollController = _getScrollController(0);
   }
 
-  void _onScrollUpdate(double offset, double maxScrollExtent) {
-    // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
-    final currentScroll = offset;
-    _childMaxScrollExtent = maxScrollExtent;
+  void _onScrollUpdate({
+    required ScrollController controller,
+    double offset = 0.0,
+  }) {
+    var scrollProgress = 0.0;
+    if (controller.hasClients && controller.position.maxScrollExtent > 0) {
+      // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
+      final currentScrollOffset = controller.offset;
+      _childMaxScrollExtent = controller.position.maxScrollExtent;
 
-    var scrollProgress =
-        (currentScroll / _childMaxScrollExtent).clamp(0.0, 1.0);
+      scrollProgress =
+          (currentScrollOffset / _childMaxScrollExtent).clamp(0.0, 1.0);
+    }
+
     ref.read(scrollProgressProvider.notifier).state = scrollProgress;
   }
 
@@ -93,41 +100,37 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         );
         break;
     }
-
-    ref.read(scrollProgressProvider.notifier).state = 0.0;
   }
 
   void _changeChapterIndex(int addIndex) {
     var epubInfo = ref.read(epubContentProvider.notifier).state!;
-    int currChapterIdx = -1;
-    int currContentNum;
-
+    var currChapterIdx = 0;
     if (epubInfo.chapter != null) {
       currChapterIdx = epubInfo.chapters.indexOf(epubInfo.chapter!);
     }
 
     int chgChapterIdx =
-        (currChapterIdx + addIndex).clamp(-1, epubInfo.chapters.length);
+        (currChapterIdx + addIndex).clamp(0, epubInfo.chapters.length - 1);
+    var chgChapter = epubInfo.chapters.elementAt(chgChapterIdx);
+    var chgContentIdx =
+        _book!.contents.keys.toList().indexOf(chgChapter.ContentFileName!);
 
-    if (chgChapterIdx == -1) {
-      currContentNum = 0;
-      _chapter = null;
-    } else if (chgChapterIdx == epubInfo.chapters.length) {
-      currContentNum = epubInfo.contents.length - 1;
-      _chapter = epubInfo.chapters.last;
-    } else {
-      _chapter = epubInfo.chapters[chgChapterIdx];
-      var targetKey = _chapter!.ContentFileName;
-      currContentNum = _book!.contents.keys.toList().indexOf(targetKey!);
-    }
+    _pageController.jumpToPage(chgContentIdx);
+  }
 
-    _pageController.animateToPage(
-      currContentNum,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.linear,
+  void _onContentsChange(int pageNum) {
+    var epubInfo = ref.read(epubContentProvider.notifier).state!;
+    var contentFileName = _book!.contents.keys.elementAt(pageNum);
+    _chapter = epubInfo.chapters.firstWhere(
+      (chapter) => chapter.ContentFileName == contentFileName,
+      orElse: () => _chapter ?? EpubChapter(),
     );
 
-    ref.read(scrollProgressProvider.notifier).state = 0.0;
+    ref.read(epubContentProvider.notifier).state = epubInfo.copyWith(
+      currContentNum: pageNum,
+      chapter: _chapter,
+      content: epubInfo.contents[pageNum],
+    );
   }
 
   void _translateBook() async {
@@ -168,15 +171,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   void _onPageChanged(int page) {
     _contentScrollController = _getScrollController(page);
-    _onScrollUpdate(_contentScrollController.offset,
-        _contentScrollController.position.maxScrollExtent);
-
-    var epubContent = ref.read(epubContentProvider.notifier).state;
-    ref.read(epubContentProvider.notifier).state = epubContent!.copyWith(
-      currContentNum: page,
-      chapter: _chapter,
-      content: epubContent.contents[page],
-    );
+    _onScrollUpdate(controller: _contentScrollController);
+    _onContentsChange(page);
   }
 
   @override

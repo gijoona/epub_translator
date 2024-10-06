@@ -7,10 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:marquee/marquee.dart';
 
-typedef ScrollUpdateCallback = void Function(
-  double offset,
-  double maxScrollExtent,
-);
+typedef ScrollUpdateCallback = void Function({
+  required ScrollController controller,
+});
 
 class EpubContents extends ConsumerStatefulWidget {
   const EpubContents({
@@ -48,10 +47,7 @@ class _EpubContentsState extends ConsumerState<EpubContents> {
     if (_scrollController.hasClients &&
         _scrollController.positions.length == 1 &&
         _scrollController.position.maxScrollExtent > 0) {
-      final currentScroll = _scrollController.offset;
-      final totalScroll = _scrollController.position.maxScrollExtent;
-
-      widget.onScrollUpdate?.call(currentScroll, totalScroll);
+      widget.onScrollUpdate?.call(controller: _scrollController);
     }
   }
 
