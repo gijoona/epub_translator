@@ -33,14 +33,14 @@ void main() async {
       const ProviderScope(child: MyApp()),
     );
   } catch (err, stacktrace) {
-    debugPrint('Error initializing app: $err');
+    debugPrint('앱 초기화 실패: $err');
     debugPrintStack(stackTrace: stacktrace);
   }
 }
 
 class MyApp extends ConsumerWidget {
   final bool _debugShowCheckedModeBanner = false;
-  final String _title = 'EPUB Translator';
+  final String _title = 'E-BOOK Reader';
 
   const MyApp({super.key});
 

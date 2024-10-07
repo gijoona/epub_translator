@@ -115,7 +115,7 @@ class EpubContentsRender extends ConsumerWidget {
                 fit: BoxFit.contain,
               );
             } catch (err) {
-              return const Text('Error loading image');
+              return const Text('이미지 로드 실패');
             }
           },
         ),

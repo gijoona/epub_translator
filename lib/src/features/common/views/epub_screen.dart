@@ -1,3 +1,4 @@
+import 'package:epub_translator/src/db/provider/database_provider.dart';
 import 'package:epub_translator/src/features/common/widgets/epub_contents.dart';
 import 'package:epub_translator/src/features/common/widgets/epub_pagenum.dart';
 import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
@@ -134,6 +135,18 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _translateBook() async {
+    final config = await ref.read(configProvider);
+    if (config.hasValue) {
+      var apiKey = config.value!['OPENAI_API_KEY'] ?? '';
+      if (apiKey.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.'),
+          ),
+        );
+      }
+    }
+
     if (_isTranslating) return; // 이미 번역 중일 경우 중복호출 방지
 
     _isTranslating = true;
@@ -288,7 +301,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 // 번역
                 SpeedDialChild(
                   onTap: _isTranslating ? null : _translateBook,
-                  label: 'Translate',
+                  label: '번역',
                   child: _isTranslating
                       ? const CircularProgressIndicator()
                       : const Icon(Icons.translate),
@@ -296,7 +309,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 // 화면분할모드 변경
                 SpeedDialChild(
                   onTap: _changeView,
-                  label: 'ChangeView',
+                  label: '화면모드 전환',
                   child: const FaIcon(FontAwesomeIcons.tableColumns),
                 ),
               ],
@@ -322,7 +335,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: constraints.maxWidth / 4,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_left_rounded,
-                      tooltip: 'Previous Chapter',
+                      tooltip: '이전 챕터',
                       onTap: () => _changeChapterIndex(-1),
                     ),
                     _buildDivider(),
@@ -330,7 +343,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: constraints.maxWidth / 4,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_left_rounded,
-                      tooltip: 'Previous Content',
+                      tooltip: '이전 컨텐츠',
                       onTap: () => _changeContentsIndex('prev'),
                     ),
                     _buildDivider(),
@@ -338,7 +351,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: constraints.maxWidth / 4,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_right_rounded,
-                      tooltip: 'Next Content',
+                      tooltip: '다음 컨텐츠',
                       onTap: () => _changeContentsIndex('next'),
                     ),
                     _buildDivider(),
@@ -346,7 +359,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: constraints.maxWidth / 4,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_right_rounded,
-                      tooltip: 'Next Chapter',
+                      tooltip: '다음 챕터',
                       onTap: () => _changeChapterIndex(1),
                     ),
                   ],

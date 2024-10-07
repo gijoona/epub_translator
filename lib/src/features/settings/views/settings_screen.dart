@@ -112,7 +112,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ExpansionPanel(
                 headerBuilder: (context, isExpanded) => const Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text('THEME MODE'),
+                  child: Text('테마 모드'),
                 ),
                 body: SegmentedButton(
                   segments: const [
@@ -147,18 +147,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ExpansionPanel(
                 headerBuilder: (context, isExpanded) => const Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text('TARGET LANGUAGE'),
+                  child: Text('번역 언어'),
                 ),
                 body: SegmentedButton(
                   segments: const [
                     ButtonSegment<String>(
                       value: 'ko',
-                      label: Text('Korean'),
+                      label: Text('한국어'),
                       icon: FaIcon(FontAwesomeIcons.circle),
                     ),
                     ButtonSegment<String>(
                       value: 'ja',
-                      label: Text('Japanese'),
+                      label: Text('日本語'),
                       icon: FaIcon(FontAwesomeIcons.circle),
                     ),
                     ButtonSegment<String>(
@@ -192,22 +192,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       children: [
                         TextFormField(
                           controller: _modelController,
-                          decoration: const InputDecoration(
-                              labelText: 'OPENAI API MODEL'),
+                          decoration:
+                              const InputDecoration(labelText: 'OPENAI API 모델'),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           controller: _apiKeyController,
-                          decoration: const InputDecoration(
-                              labelText: 'OPENAI API KEY'),
+                          decoration:
+                              const InputDecoration(labelText: 'OPENAI API 키'),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           minLines: 10,
                           maxLines: 40,
                           controller: _promptController,
-                          decoration: const InputDecoration(
-                              labelText: 'TRANSLATION PROMPT'),
+                          decoration:
+                              const InputDecoration(labelText: '번역 프롬프트'),
                         ),
                       ],
                     ),

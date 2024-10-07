@@ -20,7 +20,7 @@ class FilePickerScreen extends ConsumerWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Selected EPUB File'),
+          title: const Text('EPUB File 선택'),
           actions: [
             IconButton(
               onPressed: () {
@@ -64,11 +64,11 @@ class FilePickerScreen extends ConsumerWidget {
                 context.pushNamed(EpubScreen.routeName);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No File Selected')),
+                  const SnackBar(content: Text('선택된 파일이 없습니다.')),
                 );
               }
             },
-            child: const Text('Open EPUB'),
+            child: const Text('EPUB 열기'),
           ),
         ),
       ),

@@ -18,8 +18,8 @@ class EpubBookModel {
 
   factory EpubBookModel.fromEpubBook(EpubBook epubBook) {
     return EpubBookModel(
-      title: epubBook.Title ?? 'untitled',
-      author: epubBook.Author ?? 'unknown Author',
+      title: epubBook.Title ?? '제목없음',
+      author: epubBook.Author ?? '작자미상',
       chapters: epubBook.Chapters!.map((chapter) => chapter).toList(),
       contents: epubBook.Content!.Html!,
       images: epubBook.Content!.Images!,
