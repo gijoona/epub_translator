@@ -20,6 +20,7 @@ class EpubReaderScreen extends ConsumerWidget {
   // 전체 내용을 한번에 그리면 버벅거리는 현상이 있으므로 ListView를 이용하여 처리하기 위해 내용을 byte단위로 짤라서 List로 처리.
   List<String> splitContentSection(EpubContentModel epub) {
     final contents = parse(epub.contents[contentsNum].Content);
+    // TODO :: 특정 케이스의 경우 body > div 외부에도 내용이 있음. 조치 필요
     final elements = contents.querySelectorAll('body > div > *');
     const contentSpliteByte = 3000;
 
