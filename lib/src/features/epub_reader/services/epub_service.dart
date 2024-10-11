@@ -22,7 +22,7 @@ class EpubService {
   String getImageAsBase64(String src) {
     final asset = _epubBook.Content!.Images!.entries
         .firstWhere(
-          (entry) => src.contains(entry.key),
+          (entry) => entry.key.contains(src) || src.contains(entry.key),
           orElse: () => MapEntry('', EpubByteContentFile()),
         )
         .value;
