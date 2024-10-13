@@ -21,7 +21,7 @@ class EpubContentsRender extends ConsumerWidget {
       shrinkWrap: true,
       data: _currContents,
       style: {
-        "body": Style(
+        "*": Style(
           fontSize: FontSize(18.0),
           lineHeight: const LineHeight(2),
         ),

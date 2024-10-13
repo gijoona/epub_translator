@@ -63,6 +63,10 @@ class _EpubContentsState extends ConsumerState<EpubContents> {
       controller: _scrollController,
       slivers: [
         SliverAppBar(
+          leading: IconButton(
+            onPressed: GoRouter.of(context).pop,
+            icon: const Icon(Icons.close),
+          ),
           snap: false,
           floating: true,
           stretch: true,

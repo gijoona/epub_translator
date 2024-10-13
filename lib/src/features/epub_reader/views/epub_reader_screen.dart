@@ -21,28 +21,31 @@ class EpubReaderScreen extends ConsumerWidget {
   List<String> splitContentSection(EpubContentModel epub) {
     final contents = parse(epub.contents[contentsNum].Content);
     // TODO :: 특정 케이스의 경우 body > div 외부에도 내용이 있음. 조치 필요
-    final elements = contents.querySelectorAll('body > div > *');
+    // final elements = contents.querySelectorAll('body > *');
+    final elements = [contents];
     const contentSpliteByte = 3000;
 
-    List<String> translatedParagraphs = [];
-    var translatedSyntax = '';
+    List<String> contentParagraphs = [];
+    var contentSyntax = '';
 
     for (var paragraph in elements) {
-      var appendTranslatedSyntax = translatedSyntax + paragraph.outerHtml;
-      if (utf8.encode(appendTranslatedSyntax).length > contentSpliteByte) {
-        translatedParagraphs.add(appendTranslatedSyntax);
-        translatedSyntax = paragraph.outerHtml; // 현재 단락을 새로 시작
+      var appendContentsSyntax = contentSyntax + paragraph.outerHtml;
+      if (utf8.encode(appendContentsSyntax).length > contentSpliteByte) {
+        if (contentSyntax.trim().isNotEmpty) {
+          contentParagraphs.add(contentSyntax);
+        }
+        contentSyntax = paragraph.outerHtml; // 현재 단락을 새로 시작
       } else {
-        translatedSyntax = appendTranslatedSyntax; // 단락 누적
+        contentSyntax = appendContentsSyntax; // 단락 누적
       }
     }
 
     // 마지막 남은 텍스트 처리
-    if (translatedSyntax.isNotEmpty) {
-      translatedParagraphs.add(translatedSyntax);
+    if (contentSyntax.isNotEmpty) {
+      contentParagraphs.add(contentSyntax);
     }
 
-    return translatedParagraphs;
+    return contentParagraphs;
   }
 
   @override

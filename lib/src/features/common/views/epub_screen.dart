@@ -135,7 +135,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _translateBook() async {
-    final config = await ref.read(configProvider);
+    final config = ref.read(configProvider);
     if (config.hasValue) {
       var apiKey = config.value!['OPENAI_API_KEY'] ?? '';
       if (apiKey.isEmpty) {
@@ -300,22 +300,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
               child: _isTranslating
                   ? const CircularProgressIndicator()
                   : const Icon(Icons.translate),
-              // children: [
-              //   // 번역
-              //   SpeedDialChild(
-              //     onTap: _isTranslating ? null : _translateBook,
-              //     label: '번역',
-              //     child: _isTranslating
-              //         ? const CircularProgressIndicator()
-              //         : const Icon(Icons.translate),
-              //   ),
-              //   // 화면분할모드 변경
-              //   SpeedDialChild(
-              //     onTap: _changeView,
-              //     label: '화면모드 전환',
-              //     child: const FaIcon(FontAwesomeIcons.tableColumns),
-              //   ),
-              // ],
             );
     });
   }
@@ -332,10 +316,11 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
               notchMargin: 8.0,
               child: LayoutBuilder(
                 builder: (context, constraints) => Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // BottomAppBar를 나누어 각 부분을 탭할 때마다 챕터/콘텐츠 이동
                     _buildBottomAppBarButton(
-                      width: constraints.maxWidth / 5,
+                      width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: FontAwesomeIcons.tableColumns,
                       tooltip: '화면분할',
@@ -343,7 +328,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ),
                     _buildDivider(),
                     _buildBottomAppBarButton(
-                      width: constraints.maxWidth / 5,
+                      width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_left_rounded,
                       tooltip: '이전 챕터',
@@ -351,7 +336,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ),
                     _buildDivider(),
                     _buildBottomAppBarButton(
-                      width: constraints.maxWidth / 5,
+                      width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_left_rounded,
                       tooltip: '이전 컨텐츠',
@@ -359,7 +344,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ),
                     _buildDivider(),
                     _buildBottomAppBarButton(
-                      width: constraints.maxWidth / 5,
+                      width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_right_rounded,
                       tooltip: '다음 컨텐츠',
@@ -367,7 +352,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     ),
                     _buildDivider(),
                     _buildBottomAppBarButton(
-                      width: constraints.maxWidth / 5,
+                      width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_right_rounded,
                       tooltip: '다음 챕터',
@@ -394,7 +379,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
-        width: width - 3,
+        width: width,
         height: height,
         child: Icon(icon, size: 30),
       ),
