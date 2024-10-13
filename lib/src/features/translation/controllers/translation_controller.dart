@@ -97,6 +97,7 @@ class TranslationController extends AsyncNotifier<String> {
     }
   }
 
+  // TODO :: Node단위로 번역하는 방식은 EPUB의 XHTML형식을 유지하는 것에는 유용하지만 번역을 위한 API 호출건수가 너무 많아서 기기의 발열을 일으킴. 당연히 베터리도 광탈함. 무조건 개선해야함.
   Future<void> translatedNode(Document document, Node node) async {
     if (node.nodeType == Node.TEXT_NODE) {
       if (node.text != null) {
