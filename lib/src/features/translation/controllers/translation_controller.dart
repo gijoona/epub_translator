@@ -46,24 +46,22 @@ class TranslationController extends AsyncNotifier<String> {
         }
       }
 
-      final ignoredEL = ['div', 'a', 'span'];
+      // TODO :: 하나의 태그안에 이미지와 텍스트가 둘다 포함되어있는 경우에 대한 처리방안 필요
+      final ignoredEL = ['div', 'a', 'span', 'image'];
       final replaceDocument = parse(documentOuterHtml);
-      final elList = replaceDocument.querySelectorAll('body *');
+      final htmlHead = replaceDocument.head;
+      final htmlBodyChildrens = replaceDocument.querySelectorAll('body *');
       var translatedSyntax = '';
-      for (var el in elList) {
-        if (!ignoredEL.contains(el.localName ?? 'none')) {
-          var appendTranslatedSyntax = '$translatedSyntax ${el.text}\n';
+      for (var el in htmlBodyChildrens) {
+        if (!ignoredEL.contains(el.localName) && 'p' != el.parent?.localName) {
+          var appendTranslatedSyntax = '$translatedSyntax ${el.outerHtml}';
           if (utf8.encode(appendTranslatedSyntax).length > 1500) {
             String translatedParagraph =
                 await _translationService.translateText(
               translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
             );
             translatedParagraphs.add(
-              translatedParagraph
-                  .split(RegExp(r'\n'))
-                  .map((syntax) => '<p>$syntax</p>')
-                  .join(),
-            );
+                '<html>${htmlHead!.outerHtml}<body>$translatedParagraph</body></html>');
 
             refreshTranslatedEpubContentsProvider(translatedParagraphs);
 
@@ -80,11 +78,7 @@ class TranslationController extends AsyncNotifier<String> {
           translatedSyntax,
         );
         translatedParagraphs.add(
-          translatedParagraph
-              .split(RegExp(r'\n'))
-              .map((syntax) => '<p>$syntax</p>')
-              .join(),
-        );
+            '<html>${htmlHead!.outerHtml}<body>$translatedParagraph</body></html>');
 
         refreshTranslatedEpubContentsProvider(translatedParagraphs);
       }
