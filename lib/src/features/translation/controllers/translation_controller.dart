@@ -1,5 +1,5 @@
 import 'dart:async';
-// import 'dart:convert';
+import 'dart:convert';
 
 import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/translation/services/translation_service.dart';
@@ -46,45 +46,48 @@ class TranslationController extends AsyncNotifier<String> {
         }
       }
 
+      final ignoredEL = ['div', 'a', 'span'];
       final replaceDocument = parse(documentOuterHtml);
-      // 노드 번역을 병렬로 처리
-      await Future.forEach<Node>(replaceDocument.nodes, (node) async {
-        await translatedNode(replaceDocument, node);
-      });
-      translatedParagraphs.add(replaceDocument.outerHtml);
-      refreshTranslatedEpubContentsProvider(translatedParagraphs);
+      final elList = replaceDocument.querySelectorAll('body *');
+      var translatedSyntax = '';
+      for (var el in elList) {
+        if (!ignoredEL.contains(el.localName ?? 'none')) {
+          var appendTranslatedSyntax = '$translatedSyntax ${el.text}\n';
+          if (utf8.encode(appendTranslatedSyntax).length > 1500) {
+            String translatedParagraph =
+                await _translationService.translateText(
+              translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
+            );
+            translatedParagraphs.add(
+              translatedParagraph
+                  .split(RegExp(r'\n'))
+                  .map((syntax) => '<p>$syntax</p>')
+                  .join(),
+            );
 
-      // final paragraphs = replaceDocument.getElementsByTagName('p');
+            refreshTranslatedEpubContentsProvider(translatedParagraphs);
 
-      // // 각 단락을 번역
-      // var translatedSyntax = '';
-      // for (var paragraph in paragraphs) {
-      //   var appendTranslatedSyntax = translatedSyntax + paragraph.outerHtml;
-      //   if (utf8.encode(appendTranslatedSyntax).length > 1500) {
-      //     String translatedParagraph = await _translationService.translateText(
-      //       translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
-      //     );
-      //     translatedParagraphs.add(translatedParagraph);
+            translatedSyntax = el.text; // 현재 단락을 새로 시작
+          } else {
+            translatedSyntax = appendTranslatedSyntax; // 단락 누적
+          }
+        }
+      }
 
-      //     epubTranslates['$currContentNum'] = translatedParagraphs;
-      //     refreshTranslatedEpubContentsProvider(epub, epubTranslates);
+      // 마지막 번역되지 않은 텍스트 처리
+      if (translatedSyntax.isNotEmpty) {
+        String translatedParagraph = await _translationService.translateText(
+          translatedSyntax,
+        );
+        translatedParagraphs.add(
+          translatedParagraph
+              .split(RegExp(r'\n'))
+              .map((syntax) => '<p>$syntax</p>')
+              .join(),
+        );
 
-      //     translatedSyntax = paragraph.outerHtml; // 현재 단락을 새로 시작
-      //   } else {
-      //     translatedSyntax = appendTranslatedSyntax; // 단락 누적
-      //   }
-      // }
-
-      // // 마지막 번역되지 않은 텍스트 처리
-      // if (translatedSyntax.isNotEmpty) {
-      //   String translatedParagraph = await _translationService.translateText(
-      //     translatedSyntax,
-      //   );
-      //   translatedParagraphs.add(translatedParagraph);
-
-      //   epubTranslates['$currContentNum'] = translatedParagraphs;
-      //   refreshTranslatedEpubContentsProvider(epub, epubTranslates);
-      // }
+        refreshTranslatedEpubContentsProvider(translatedParagraphs);
+      }
 
       // 번역된 단락들을 결합하여 새로운 챕터 내용 구성
       final translatedContent = translatedParagraphs.join();
@@ -94,30 +97,6 @@ class TranslationController extends AsyncNotifier<String> {
     } catch (err) {
       // 에러 발생 시 에러 상태로 업데이트
       state = AsyncValue.error(err, StackTrace.fromString(err.toString()));
-    }
-  }
-
-  // TODO :: Node단위로 번역하는 방식은 EPUB의 XHTML형식을 유지하는 것에는 유용하지만 번역을 위한 API 호출건수가 너무 많아서 기기의 발열을 일으킴. 당연히 베터리도 광탈함. 무조건 개선해야함.
-  Future<void> translatedNode(Document document, Node node) async {
-    if (node.nodeType == Node.TEXT_NODE) {
-      if (node.text != null) {
-        var trimText = escapeHtml(
-            (node.text ?? '').trim().replaceAll(RegExp('\\r\\n'), ''));
-        var matchStr = RegExp(r'[A-Z|a-z|\d|ㄱ-힣|\w|ぁ-ゔ|ァ-ヴー|々〆〤]+');
-        if (trimText.isNotEmpty && matchStr.hasMatch(trimText)) {
-          var translatedText =
-              await _translationService.translateText(trimText);
-          node.text = translatedText;
-          refreshTranslatedEpubContentsProvider([document.outerHtml]);
-        }
-      }
-    } else {
-      if (!'head style'.contains(node.parent?.localName ?? 'none')) {
-        // 자식 노드에 대해서 비동기로 처리
-        await Future.forEach<Node>(node.nodes, (childNode) async {
-          await translatedNode(document, childNode);
-        });
-      }
     }
   }
 
