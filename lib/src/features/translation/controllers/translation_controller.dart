@@ -11,6 +11,10 @@ import 'package:html/dom.dart';
 class TranslationController extends AsyncNotifier<String> {
   late TranslationService _translationService;
 
+  // 번역할 텍스트 추출 및 결합
+  List<String> textNodes = [];
+  List<Node> textNodeReferences = [];
+
   @override
   FutureOr<String> build() {
     _translationService = ref.watch(translationServiceProvider);
@@ -19,6 +23,10 @@ class TranslationController extends AsyncNotifier<String> {
 
   Future<void> translateEpub() async {
     state = const AsyncValue.loading();
+
+    textNodes = [];
+    textNodeReferences = [];
+
     EpubContentModel epub = ref.read(epubContentProvider.notifier).state!;
     ref.read(translatedEpubContentsProvider.notifier).state = [''];
 
@@ -46,29 +54,41 @@ class TranslationController extends AsyncNotifier<String> {
         }
       }
 
-      // TODO :: 하나의 태그안에 이미지와 텍스트가 둘다 포함되어있는 경우에 대한 처리방안 필요
-      final ignoredEL = ['div', 'a', 'span', 'image'];
+      // 단락내 문장에 사용되는 span의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
+      final spanElements =
+          parse(documentOuterHtml).getElementsByTagName('span');
+      if (spanElements.isNotEmpty) {
+        for (var span in spanElements) {
+          var spanInnerHtml = span.innerHtml;
+          documentOuterHtml =
+              documentOuterHtml.replaceAll(span.outerHtml, spanInnerHtml);
+        }
+      }
+
+      // 단락내 문장에 사용되는 em의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
+      final emElements = parse(documentOuterHtml).getElementsByTagName('em');
+      if (emElements.isNotEmpty) {
+        for (var em in emElements) {
+          var emInnerHtml = em.innerHtml;
+          documentOuterHtml =
+              documentOuterHtml.replaceAll(em.outerHtml, emInnerHtml);
+        }
+      }
+
       final replaceDocument = parse(documentOuterHtml);
-      final htmlHead = replaceDocument.head;
-      final htmlBodyChildrens = replaceDocument.querySelectorAll('body *');
+      extractTextNodes(replaceDocument.body!);
+
       var translatedSyntax = '';
-      for (var el in htmlBodyChildrens) {
-        if (!ignoredEL.contains(el.localName) && 'p' != el.parent?.localName) {
-          var appendTranslatedSyntax = '$translatedSyntax ${el.outerHtml}';
-          if (utf8.encode(appendTranslatedSyntax).length > 1500) {
-            String translatedParagraph =
-                await _translationService.translateText(
-              translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
-            );
-            translatedParagraphs.add(
-                '<html>${htmlHead!.outerHtml}<body>$translatedParagraph</body></html>');
-
-            refreshTranslatedEpubContentsProvider(translatedParagraphs);
-
-            translatedSyntax = el.text; // 현재 단락을 새로 시작
-          } else {
-            translatedSyntax = appendTranslatedSyntax; // 단락 누적
-          }
+      for (var text in textNodes) {
+        var appendTranslatedSyntax = '$translatedSyntax|||$text';
+        if (utf8.encode(appendTranslatedSyntax).length > 1500) {
+          String translatedParagraph = await _translationService.translateText(
+            translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
+          );
+          translatedParagraphs.add(translatedParagraph);
+          translatedSyntax = text; // 현재 단락을 새로 시작
+        } else {
+          translatedSyntax = appendTranslatedSyntax; // 단락 누적
         }
       }
 
@@ -77,20 +97,38 @@ class TranslationController extends AsyncNotifier<String> {
         String translatedParagraph = await _translationService.translateText(
           translatedSyntax,
         );
-        translatedParagraphs.add(
-            '<html>${htmlHead!.outerHtml}<body>$translatedParagraph</body></html>');
-
-        refreshTranslatedEpubContentsProvider(translatedParagraphs);
+        translatedParagraphs.add(translatedParagraph);
       }
 
+      List<String> translatedTexts =
+          translatedParagraphs.join('|||').split('|||');
+
+      for (int i = 0; i < textNodeReferences.length; i++) {
+        textNodeReferences[i].text =
+            translatedTexts.elementAtOrNull(i + 1) ?? '';
+      }
+
+      refreshTranslatedEpubContentsProvider([replaceDocument.outerHtml]);
+
       // 번역된 단락들을 결합하여 새로운 챕터 내용 구성
-      final translatedContent = translatedParagraphs.join();
+      final translatedContent = replaceDocument.outerHtml;
 
       // 상태를 번역된 책으로 업데이트
       state = AsyncValue.data(translatedContent);
     } catch (err) {
       // 에러 발생 시 에러 상태로 업데이트
       state = AsyncValue.error(err, StackTrace.fromString(err.toString()));
+    }
+  }
+
+  void extractTextNodes(Node node) {
+    if (node.nodeType == Node.TEXT_NODE &&
+        node.text != null &&
+        node.text!.trim().isNotEmpty) {
+      textNodes.add(node.text!.trim());
+      textNodeReferences.add(node);
+    } else {
+      node.nodes.forEach(extractTextNodes); // 자식 노드 탐색
     }
   }
 
