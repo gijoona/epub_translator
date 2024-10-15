@@ -79,6 +79,7 @@ class TranslationController extends AsyncNotifier<String> {
       extractTextNodes(replaceDocument.body!);
 
       var translationProcessIdx = 0;
+      List<String> translatedParagraphs = [];
 
       var translatedSyntax = '';
       for (var text in textNodes) {
@@ -88,6 +89,7 @@ class TranslationController extends AsyncNotifier<String> {
             translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
           );
 
+          translatedParagraphs.add(translatedParagraph);
           List<String> translatedTexts = translatedParagraph.split('|||');
 
           if (translationProcessIdx == 0) translatedTexts.removeAt(0);
@@ -113,6 +115,7 @@ class TranslationController extends AsyncNotifier<String> {
           translatedSyntax,
         );
 
+        translatedParagraphs.add(translatedParagraph);
         List<String> translatedTexts = translatedParagraph.split('|||');
 
         if (translationProcessIdx == 0) translatedTexts.removeAt(0);
@@ -126,6 +129,18 @@ class TranslationController extends AsyncNotifier<String> {
         refreshTranslatedEpubContentsProvider(
             replaceDocument.body!.children.map((el) => el.outerHtml).toList());
       }
+
+      // 번역이 완료되면 최종적으로 번역된 내용으로 치환하여 화면을 갱신한다.
+      List<String> translatedTexts =
+          translatedParagraphs.join('|||').split('|||');
+
+      for (int i = 0; i < textNodeReferences.length; i++) {
+        textNodeReferences[i].text =
+            translatedTexts.elementAtOrNull(i + 1) ?? '';
+      }
+
+      refreshTranslatedEpubContentsProvider(
+          replaceDocument.body!.children.map((el) => el.outerHtml).toList());
 
       // 번역된 단락들을 결합하여 새로운 챕터 내용 구성
       final translatedContent = replaceDocument.outerHtml;

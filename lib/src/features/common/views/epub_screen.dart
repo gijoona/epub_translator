@@ -144,6 +144,10 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
             content: Text('번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.'),
           ),
         );
+      } else {
+        setState(() {
+          _viewMode = EpubViewMode.translation;
+        });
       }
     }
 
