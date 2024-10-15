@@ -51,6 +51,34 @@ class _EpubContentsState extends ConsumerState<EpubContents> {
     }
   }
 
+  double _blankSpace() {
+    double textWidth = _calcTextSize(
+      text: widget.caption,
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+      ),
+      context: context,
+    ).width;
+
+    var calcBlankSpace = MediaQuery.of(context).size.width - textWidth;
+    return calcBlankSpace > 30 ? calcBlankSpace : 30;
+  }
+
+  Size _calcTextSize({
+    required String text,
+    required TextStyle style,
+    required BuildContext context,
+  }) {
+    final Size size = (TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textScaler: MediaQuery.of(context).textScaler,
+      textDirection: TextDirection.ltr,
+    )..layout())
+        .size;
+    return size;
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_updateScrollProgress);
@@ -83,7 +111,14 @@ class _EpubContentsState extends ConsumerState<EpubContents> {
                 left: 50,
               ),
               child: Marquee(
-                pauseAfterRound: const Duration(milliseconds: 5),
+                blankSpace: _blankSpace(),
+                velocity: 100.0,
+                pauseAfterRound: const Duration(seconds: 5),
+                startPadding: 10.0,
+                accelerationDuration: const Duration(seconds: 1),
+                accelerationCurve: Curves.linear,
+                decelerationDuration: const Duration(milliseconds: 500),
+                decelerationCurve: Curves.easeOut,
                 text: widget.caption,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
