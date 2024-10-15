@@ -31,10 +31,7 @@ class TranslationController extends AsyncNotifier<String> {
     ref.read(translatedEpubContentsProvider.notifier).state = [''];
 
     try {
-      // final book = currentState.value;
       final epubContent = epub.content.Content;
-
-      var translatedParagraphs = <String>[];
 
       // HTML 내용을 파싱하여 단락별로 나누기
       final document = parse(epubContent);
@@ -76,7 +73,12 @@ class TranslationController extends AsyncNotifier<String> {
       }
 
       final replaceDocument = parse(documentOuterHtml);
+      refreshTranslatedEpubContentsProvider(
+          replaceDocument.body!.children.map((el) => el.outerHtml).toList());
+
       extractTextNodes(replaceDocument.body!);
+
+      var translationProcessIdx = 0;
 
       var translatedSyntax = '';
       for (var text in textNodes) {
@@ -85,7 +87,20 @@ class TranslationController extends AsyncNotifier<String> {
           String translatedParagraph = await _translationService.translateText(
             translatedSyntax, // HTML 태그 포함한 단락 전체를 번역
           );
-          translatedParagraphs.add(translatedParagraph);
+
+          List<String> translatedTexts = translatedParagraph.split('|||');
+
+          if (translationProcessIdx == 0) translatedTexts.removeAt(0);
+
+          for (int i = 0; i < translatedTexts.length; i++) {
+            textNodeReferences[translationProcessIdx].text =
+                translatedTexts.elementAtOrNull(i) ?? '';
+            translationProcessIdx++;
+          }
+
+          refreshTranslatedEpubContentsProvider(replaceDocument.body!.children
+              .map((el) => el.outerHtml)
+              .toList());
           translatedSyntax = text; // 현재 단락을 새로 시작
         } else {
           translatedSyntax = appendTranslatedSyntax; // 단락 누적
@@ -97,18 +112,20 @@ class TranslationController extends AsyncNotifier<String> {
         String translatedParagraph = await _translationService.translateText(
           translatedSyntax,
         );
-        translatedParagraphs.add(translatedParagraph);
+
+        List<String> translatedTexts = translatedParagraph.split('|||');
+
+        if (translationProcessIdx == 0) translatedTexts.removeAt(0);
+
+        for (int i = 0; i < translatedTexts.length; i++) {
+          textNodeReferences[translationProcessIdx].text =
+              translatedTexts.elementAtOrNull(i) ?? '';
+          translationProcessIdx++;
+        }
+
+        refreshTranslatedEpubContentsProvider(
+            replaceDocument.body!.children.map((el) => el.outerHtml).toList());
       }
-
-      List<String> translatedTexts =
-          translatedParagraphs.join('|||').split('|||');
-
-      for (int i = 0; i < textNodeReferences.length; i++) {
-        textNodeReferences[i].text =
-            translatedTexts.elementAtOrNull(i + 1) ?? '';
-      }
-
-      refreshTranslatedEpubContentsProvider([replaceDocument.outerHtml]);
 
       // 번역된 단락들을 결합하여 새로운 챕터 내용 구성
       final translatedContent = replaceDocument.outerHtml;
