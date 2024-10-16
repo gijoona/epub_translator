@@ -145,6 +145,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
           ),
         );
       } else {
+        // TODO :: 번역을 수행한 후 다음 Content로 이동했을 경우 화면모드를 어떻게 지정하는게 좋을지 고려해야함.
+        // 번역기능을 호출한 경우 화면모드를 translation으로 변경.
         setState(() {
           _viewMode = EpubViewMode.translation;
         });
