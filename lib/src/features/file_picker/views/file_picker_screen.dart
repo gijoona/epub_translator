@@ -50,6 +50,10 @@ class FilePickerScreen extends ConsumerWidget {
                 var book = ref.read(epubBookProvider.notifier).state;
 
                 if (book != null) {
+                  Map<String, List<String>> translatesMap = {};
+                  book.contents.values.indexed.forEach((value) =>
+                      translatesMap['${value.$1}'] = [value.$2.Content ?? '']);
+
                   ref.read(epubContentProvider.notifier).state =
                       EpubContentModel(
                     title: book.title,
@@ -57,6 +61,7 @@ class FilePickerScreen extends ConsumerWidget {
                     chapters: book.chapters,
                     content: book.contents.values.first,
                     contents: book.contents.values.toList(),
+                    translates: translatesMap,
                   );
                 }
 
