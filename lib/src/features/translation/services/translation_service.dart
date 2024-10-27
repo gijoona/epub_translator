@@ -19,7 +19,7 @@ class TranslationService {
   }
 
   // 문장번역을 위해 구분자 처리와 관련된 부분은 사용자 입력으로 변경되면 안되므로 하드코딩해둠.
-  static const defaultPrompt =
+  static const String defaultPrompt =
       '''You are an expert literary translator specializing in translating EPUB novels. Your goal is to provide a context-aware and accurate translation that adapts the meaning of the text naturally into the target language. Focus on capturing the overall meaning and tone of the original, even if this requires some level of interpretation or adaptation.
 
 General Rules:
@@ -38,7 +38,7 @@ Tone and style consistency: Maintain the same tone and style as the original tex
     final systemMessage = OpenAIChatCompletionChoiceMessageModel(
       content: [
         OpenAIChatCompletionChoiceMessageContentItemModel.text(
-            defaultPrompt + prompt),
+            '$defaultPrompt $prompt'),
       ],
       role: OpenAIChatMessageRole.system,
     );

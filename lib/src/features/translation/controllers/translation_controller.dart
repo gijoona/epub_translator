@@ -37,42 +37,8 @@ class TranslationController extends AsyncNotifier<String> {
       final document = parse(epubContent);
       String documentOuterHtml = document.outerHtml;
 
-      // 일본 소설 번역 중 후리가나를 표현하기 위해 사용하는 ruby 태그는 번역이 안되므로 별도 처리.
-      final rubyElements = document.getElementsByTagName('ruby');
-      if (rubyElements.isNotEmpty) {
-        for (var ruby in rubyElements) {
-          final rbElements = ruby.getElementsByTagName('rb');
-          var rbInnerHtml = '';
-          for (var rb in rbElements) {
-            rbInnerHtml += rb.innerHtml;
-          }
-          documentOuterHtml =
-              documentOuterHtml.replaceAll(ruby.outerHtml, rbInnerHtml);
-        }
-      }
-
-      // 단락내 문장에 사용되는 span의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
-      final spanElements =
-          parse(documentOuterHtml).getElementsByTagName('span');
-      if (spanElements.isNotEmpty) {
-        for (var span in spanElements) {
-          var spanInnerHtml = span.innerHtml;
-          documentOuterHtml =
-              documentOuterHtml.replaceAll(span.outerHtml, spanInnerHtml);
-        }
-      }
-
-      // 단락내 문장에 사용되는 em의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
-      final emElements = parse(documentOuterHtml).getElementsByTagName('em');
-      if (emElements.isNotEmpty) {
-        for (var em in emElements) {
-          var emInnerHtml = em.innerHtml;
-          documentOuterHtml =
-              documentOuterHtml.replaceAll(em.outerHtml, emInnerHtml);
-        }
-      }
-
-      final replaceDocument = parse(documentOuterHtml);
+      final replaceDocument =
+          parse(_cleanUntranslatableTags(document, documentOuterHtml));
       refreshTranslatedEpubContentsProvider(
           replaceDocument.body!.children.map((el) => el.outerHtml).toList());
 
@@ -151,6 +117,45 @@ class TranslationController extends AsyncNotifier<String> {
       // 에러 발생 시 에러 상태로 업데이트
       state = AsyncValue.error(err, StackTrace.fromString(err.toString()));
     }
+  }
+
+  /// 특정 태그 처리 (ruby, span, em
+  String _cleanUntranslatableTags(Document document, String documentOuterHtml) {
+    // 일본 소설 번역 중 후리가나를 표현하기 위해 사용하는 ruby 태그는 번역이 안되므로 별도 처리.
+    final rubyElements = document.getElementsByTagName('ruby');
+    if (rubyElements.isNotEmpty) {
+      for (var ruby in rubyElements) {
+        final rbElements = ruby.getElementsByTagName('rb');
+        var rbInnerHtml = '';
+        for (var rb in rbElements) {
+          rbInnerHtml += rb.innerHtml;
+        }
+        documentOuterHtml =
+            documentOuterHtml.replaceAll(ruby.outerHtml, rbInnerHtml);
+      }
+    }
+
+    // 단락내 문장에 사용되는 span의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
+    final spanElements = parse(documentOuterHtml).getElementsByTagName('span');
+    if (spanElements.isNotEmpty) {
+      for (var span in spanElements) {
+        var spanInnerHtml = span.innerHtml;
+        documentOuterHtml =
+            documentOuterHtml.replaceAll(span.outerHtml, spanInnerHtml);
+      }
+    }
+
+    // 단락내 문장에 사용되는 em의 경우 번역문 대체 시 위치를 틀어지게 하므로 별도 처리.
+    final emElements = parse(documentOuterHtml).getElementsByTagName('em');
+    if (emElements.isNotEmpty) {
+      for (var em in emElements) {
+        var emInnerHtml = em.innerHtml;
+        documentOuterHtml =
+            documentOuterHtml.replaceAll(em.outerHtml, emInnerHtml);
+      }
+    }
+
+    return documentOuterHtml;
   }
 
   void extractTextNodes(Node node) {
