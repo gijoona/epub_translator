@@ -119,7 +119,7 @@ class TranslationController extends AsyncNotifier<String> {
     }
   }
 
-  /// 특정 태그 처리 (ruby, span, em
+  /// 특정 태그 처리 (ruby, span, em)
   String _cleanUntranslatableTags(Document document, String documentOuterHtml) {
     // 일본 소설 번역 중 후리가나를 표현하기 위해 사용하는 ruby 태그는 번역이 안되므로 별도 처리.
     final rubyElements = document.getElementsByTagName('ruby');
