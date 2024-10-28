@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/features/common/views/epub_screen.dart';
+import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';

@@ -1,6 +1,6 @@
 import 'package:epub_translator/src/db/provider/database_provider.dart';
-import 'package:epub_translator/src/features/common/widgets/epub_contents.dart';
-import 'package:epub_translator/src/features/common/widgets/epub_pagenum.dart';
+import 'package:epub_translator/src/features/epub_reader/widgets/epub_body_widget.dart';
+import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/epub_reader/translation/controllers/translation_controller.dart';
@@ -223,7 +223,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                 itemBuilder: (context, contentsNum) {
                   final scrollController = _getScrollController(contentsNum);
 
-                  return EpubContents(
+                  return EpubBodyWidget(
                     caption: caption,
                     viewMode: _viewMode,
                     contentsNum: contentsNum,
@@ -240,7 +240,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     : Positioned(
                         top: 70,
                         right: 10,
-                        child: EpubPageNum(maxContentsIdx: _maxContentsIdx),
+                        child:
+                            EpubPageNumWidget(maxContentsIdx: _maxContentsIdx),
                       );
               }),
               // 번역 중임을 나타내는 LinearProgressIndicator

@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/features/common/views/epub_screen.dart';
+import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/file_picker/views/file_picker_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

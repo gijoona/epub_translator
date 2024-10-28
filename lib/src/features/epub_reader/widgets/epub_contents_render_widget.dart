@@ -6,8 +6,8 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/src/widgets/image.dart' as Images;
 
-class EpubContentsRender extends ConsumerWidget {
-  const EpubContentsRender({
+class EpubContentsRenderWidget extends ConsumerWidget {
+  const EpubContentsRenderWidget({
     super.key,
     required String contents,
   }) : _currContents = contents;

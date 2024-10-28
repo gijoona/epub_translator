@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/features/common/views/epub_screen.dart';
+import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/views/epub_reader_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/translation/views/epub_translation_screen.dart';
@@ -11,8 +11,8 @@ typedef ScrollUpdateCallback = void Function({
   required ScrollController controller,
 });
 
-class EpubContents extends ConsumerStatefulWidget {
-  const EpubContents({
+class EpubBodyWidget extends ConsumerStatefulWidget {
+  const EpubBodyWidget({
     super.key,
     required this.caption,
     required EpubViewMode viewMode,
@@ -28,10 +28,10 @@ class EpubContents extends ConsumerStatefulWidget {
   final ScrollUpdateCallback? onScrollUpdate;
 
   @override
-  ConsumerState<EpubContents> createState() => _EpubContentsState();
+  ConsumerState<EpubBodyWidget> createState() => _EpubBodyWidgetState();
 }
 
-class _EpubContentsState extends ConsumerState<EpubContents> {
+class _EpubBodyWidgetState extends ConsumerState<EpubBodyWidget> {
   late final ScrollController _scrollController;
 
   @override

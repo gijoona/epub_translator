@@ -2,8 +2,8 @@ import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EpubPageNum extends StatelessWidget {
-  const EpubPageNum({
+class EpubPageNumWidget extends StatelessWidget {
+  const EpubPageNumWidget({
     super.key,
     required int maxContentsIdx,
   }) : _maxContentsIdx = maxContentsIdx;

@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/features/common/widgets/epub_contents_render.dart';
+import 'package:epub_translator/src/features/epub_reader/widgets/epub_contents_render_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +28,7 @@ class _EpubTranslationScreenState extends ConsumerState<EpubTranslationScreen> {
         primary: false, // <====  disable scrolling. 리스트뷰 내부는 스크롤 안할거임
         itemCount: translationEpubContents.length,
         itemBuilder: (context, index) {
-          return EpubContentsRender(
+          return EpubContentsRenderWidget(
             contents: translationEpubContents[index],
           );
         },
