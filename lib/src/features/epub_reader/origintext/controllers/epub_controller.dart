@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/features/epub_reader/services/epub_service.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/services/epub_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class EpubController extends StateNotifier<AsyncValue<void>> {

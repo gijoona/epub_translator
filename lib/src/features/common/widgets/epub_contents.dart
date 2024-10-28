@@ -1,7 +1,7 @@
 import 'package:epub_translator/src/features/common/views/epub_screen.dart';
-import 'package:epub_translator/src/features/epub_reader/views/epub_reader_screen.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/views/epub_reader_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
-import 'package:epub_translator/src/features/translation/views/epub_translation_screen.dart';
+import 'package:epub_translator/src/features/epub_reader/translation/views/epub_translation_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

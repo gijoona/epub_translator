@@ -1,9 +1,9 @@
 import 'package:epub_translator/src/features/common/views/epub_screen.dart';
-import 'package:epub_translator/src/features/epub_reader/controllers/epub_controller.dart';
-import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
-import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
-import 'package:epub_translator/src/features/translation/controllers/translation_controller.dart';
+import 'package:epub_translator/src/features/epub_reader/translation/controllers/translation_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

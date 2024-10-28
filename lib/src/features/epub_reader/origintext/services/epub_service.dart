@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:epub_translator/src/features/epub_reader/models/epub_book_model.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

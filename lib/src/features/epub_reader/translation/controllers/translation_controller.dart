@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:epub_translator/src/features/epub_reader/models/epub_content_model.dart';
-import 'package:epub_translator/src/features/translation/services/translation_service.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
+import 'package:epub_translator/src/features/epub_reader/translation/services/translation_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:html/parser.dart' show parse;

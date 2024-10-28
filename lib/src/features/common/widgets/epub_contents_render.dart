@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:epub_translator/src/features/epub_reader/services/epub_service.dart';
+import 'package:epub_translator/src/features/epub_reader/origintext/services/epub_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
