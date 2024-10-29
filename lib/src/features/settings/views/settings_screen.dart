@@ -1,3 +1,4 @@
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/provider/database_provider.dart'; // DatabaseHelper, ConfigNotifier와 관련된 파일
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,13 +72,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       configNotifier.saveConfig('TRANSLATION_PROMPT', prompt);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('설정이 저장되었습니다.')),
+        SnackBar(
+          content: Text(
+            S.of(context).successMsg('saveSattings'),
+          ),
+        ),
       );
       ref.read(configProvider.notifier).loadAllConfigs();
     } else {
       // 유효하지 않은 입력이 있을 경우
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('모든 필드를 올바르게 입력하세요.')),
+        SnackBar(
+          content: Text(
+            S.of(context).validMsg('notInvalid'),
+          ),
+        ),
       );
     }
   }
@@ -94,10 +103,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('설정 관리'),
+        title: Text(S.of(context).settingsTitle),
         actions: [
           IconButton(
-            tooltip: '설정 저장',
+            tooltip: S.of(context).settingsSaveBtn,
             onPressed: _saveSettings,
             icon: const FaIcon(FontAwesomeIcons.check),
           ),
@@ -110,26 +119,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             elevation: 0,
             children: [
               ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text('테마 모드'),
+                headerBuilder: (context, isExpanded) => Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(S.of(context).themeMode),
                 ),
                 body: SegmentedButton(
-                  segments: const [
+                  segments: [
                     ButtonSegment<ThemeMode>(
                       value: ThemeMode.system,
-                      label: Text('System'),
-                      icon: FaIcon(FontAwesomeIcons.circleHalfStroke),
+                      label: Text(S.of(context).themeModeOption('system')),
+                      icon: const FaIcon(FontAwesomeIcons.circleHalfStroke),
                     ),
                     ButtonSegment<ThemeMode>(
                       value: ThemeMode.light,
-                      label: Text('Light'),
-                      icon: FaIcon(FontAwesomeIcons.sun),
+                      label: Text(S.of(context).themeModeOption('light')),
+                      icon: const FaIcon(FontAwesomeIcons.sun),
                     ),
                     ButtonSegment<ThemeMode>(
                       value: ThemeMode.dark,
-                      label: Text('Dark'),
-                      icon: FaIcon(FontAwesomeIcons.moon),
+                      label: Text(S.of(context).themeModeOption('dark')),
+                      icon: const FaIcon(FontAwesomeIcons.moon),
                     ),
                   ],
                   selected: {_themeMode},
@@ -145,26 +154,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 isExpanded: _isOpen[0],
               ),
               ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text('번역 언어'),
+                headerBuilder: (context, isExpanded) => Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(S.of(context).translateLanguage),
                 ),
                 body: SegmentedButton(
-                  segments: const [
+                  segments: [
                     ButtonSegment<String>(
                       value: 'ko',
-                      label: Text('한국어'),
-                      icon: FaIcon(FontAwesomeIcons.circle),
+                      label: Text(S.of(context).translateLanguageOption('ko')),
+                      icon: const FaIcon(FontAwesomeIcons.circle),
                     ),
                     ButtonSegment<String>(
                       value: 'ja',
-                      label: Text('日本語'),
-                      icon: FaIcon(FontAwesomeIcons.circle),
+                      label: Text(S.of(context).translateLanguageOption('ja')),
+                      icon: const FaIcon(FontAwesomeIcons.circle),
                     ),
                     ButtonSegment<String>(
                       value: 'en',
-                      label: Text('English'),
-                      icon: FaIcon(FontAwesomeIcons.circle),
+                      label: Text(S.of(context).translateLanguageOption('en')),
+                      icon: const FaIcon(FontAwesomeIcons.circle),
                     ),
                   ],
                   selected: {_targetLanguage},
@@ -180,9 +189,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 isExpanded: _isOpen[1],
               ),
               ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Text('OPENAI API'),
+                headerBuilder: (context, isExpanded) => Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(S.of(context).openaiAPI),
                 ),
                 body: Form(
                   key: _formKey, // Form의 상태를 관리하는 키
@@ -192,22 +201,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       children: [
                         TextFormField(
                           controller: _modelController,
-                          decoration:
-                              const InputDecoration(labelText: 'OPENAI API 모델'),
+                          decoration: InputDecoration(
+                              labelText: S.of(context).openaiAPIModel),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           controller: _apiKeyController,
-                          decoration:
-                              const InputDecoration(labelText: 'OPENAI API 키'),
+                          decoration: InputDecoration(
+                              labelText: S.of(context).openaiAPIKey),
                         ),
                         const SizedBox(height: 10),
                         TextFormField(
                           minLines: 10,
                           maxLines: 40,
                           controller: _promptController,
-                          decoration:
-                              const InputDecoration(labelText: '번역 프롬프트'),
+                          decoration: InputDecoration(
+                              labelText: S.of(context).openaiAPIPrompt),
                         ),
                       ],
                     ),

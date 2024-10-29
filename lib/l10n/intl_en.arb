@@ -1,0 +1,59 @@
+{
+    "@@locale": "en",
+    "appName": "E-BOOK Reader",
+    "filePickerTitle": "EPUB File Select",
+    "fileOpen": "open EPUB",
+    "settingsTitle": "Settings",
+    "settingsSaveBtn": "Save Settings",
+    "themeMode": "Theme Mode",
+    "themeModeOption": "{themeMode, select, system{System} light{Light} dark{Dark} other{}}",
+    "@themeModeOption": {
+        "description": "ThemeMode Options",
+        "placeholders": {
+            "themeMode": {
+                "type": "String"
+            }
+        }
+    },
+    "translateLanguage": "Translate Language",
+    "translateLanguageOption": "{language, select, ko{Korean} ja{Japenes} en{English} other{}}",
+    "@translateLanguageOption": {
+        "description": "Translate Language Options",
+        "placeholders": {
+            "language": {
+                "type": "String"
+            }
+        }
+    },
+    "openaiAPI": "OPENAI API",
+    "openaiAPIModel": "OPENAI API Model",
+    "openaiAPIKey": "OPENAI API Key",
+    "openaiAPIPrompt": "Translate Prompt",
+    "successMsg": "{msgType, select, saveSattings{Settings save complated} other{}}",
+    "@successMsg": {
+        "description": "Success Message Define",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} other{}}",
+    "@errorMsg": {
+        "description": "Error Message Define",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "validMsg": "{msgType, select, notInvalid{Check All Fields.} other{}}",
+    "@validMsg": {
+        "description": "Validation Message Define",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "@@locale": "ko",
+    "appName": "E-BOOK 리더",
+    "filePickerTitle": "EPUB File 선택",
+    "fileOpen": "EPUB 열기",
+    "settingsTitle": "설정 관리",
+    "settingsSaveBtn": "설정 저장",
+    "themeMode": "테마 모드",
+    "themeModeOption": "{themeMode, select, system{시스템} light{라이트} dark{다크} other{}}",
+    "@themeModeOption": {
+        "description": "테마모드 선택 옵션",
+        "placeholders": {
+            "themeMode": {
+                "type": "String"
+            }
+        }
+    },
+    "translateLanguage": "번역 언어",
+    "translateLanguageOption": "{language, select, ko{한국어} ja{일본어} en{영어} other{}}",
+    "@translateLanguageOption": {
+        "description": "번역언어 선택 옵션",
+        "placeholders": {
+            "language": {
+                "type": "String"
+            }
+        }
+    },
+    "openaiAPI": "OPENAI API",
+    "openaiAPIModel": "OPENAI API 모델",
+    "openaiAPIKey": "OPENAI API 키",
+    "openaiAPIPrompt": "번역 프롬프트",
+    "successMsg": "{msgType, select, saveSattings{설정이 저장되었습니다.} other{}}",
+    "@successMsg": {
+        "description": "완료 메시지 정의",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "errorMsg": "{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} other{}}",
+    "@errorMsg": {
+        "description": "에러 메시지 정의",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "validMsg": "{msgType, select, notInvalid{모든 필드를 올바르게 입력하세요.} other{}}",
+    "@validMsg": {
+        "description": "검증 메시지 정의",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    }
+}

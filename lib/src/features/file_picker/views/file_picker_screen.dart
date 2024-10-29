@@ -1,3 +1,4 @@
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -20,7 +21,7 @@ class FilePickerScreen extends ConsumerWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('EPUB File 선택'),
+          title: Text(S.of(context).filePickerTitle),
           actions: [
             IconButton(
               onPressed: () {
@@ -51,8 +52,9 @@ class FilePickerScreen extends ConsumerWidget {
 
                 if (book != null) {
                   Map<String, List<String>> translatesMap = {};
-                  book.contents.values.indexed.forEach((value) =>
-                      translatesMap['${value.$1}'] = [value.$2.Content ?? '']);
+                  for (var value in book.contents.values.indexed) {
+                    translatesMap['${value.$1}'] = [value.$2.Content ?? ''];
+                  }
 
                   ref.read(epubContentProvider.notifier).state =
                       EpubContentModel(
@@ -69,11 +71,15 @@ class FilePickerScreen extends ConsumerWidget {
                 context.pushNamed(EpubScreen.routeName);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('선택된 파일이 없습니다.')),
+                  SnackBar(
+                    content: Text(
+                      S.of(context).errorMsg('noneSelectedFile'),
+                    ),
+                  ),
                 );
               }
             },
-            child: const Text('EPUB 열기'),
+            child: Text(S.of(context).fileOpen),
           ),
         ),
       ),

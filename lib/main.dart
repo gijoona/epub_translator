@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/router.dart';
 import 'package:epub_translator/src/db/provider/database_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> initializeApp() async {
@@ -18,6 +21,8 @@ Future<void> initializeApp() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi; // Initialize the databasefactory
   }
+
+  Intl.defaultLocale = "ko";
 }
 
 void main() async {
@@ -40,7 +45,6 @@ void main() async {
 
 class MyApp extends ConsumerWidget {
   final bool _debugShowCheckedModeBanner = false;
-  final String _title = 'E-BOOK Reader';
 
   const MyApp({super.key});
 
@@ -68,7 +72,6 @@ class MyApp extends ConsumerWidget {
         return MaterialApp.router(
           debugShowCheckedModeBanner: _debugShowCheckedModeBanner,
           routerConfig: ref.watch(routerProvider),
-          title: _title,
           themeMode: ThemeMode.values.elementAt(int.parse(theme)),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
@@ -77,6 +80,13 @@ class MyApp extends ConsumerWidget {
           darkTheme: ThemeData.dark(
             useMaterial3: true,
           ),
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
         );
       },
     );
