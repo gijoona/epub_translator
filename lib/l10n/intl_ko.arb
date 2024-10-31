@@ -29,6 +29,15 @@
     "openaiAPIModel": "OPENAI API 모델",
     "openaiAPIKey": "OPENAI API 키",
     "openaiAPIPrompt": "번역 프롬프트",
+    "epubActionBtns": "{btnType, select, viewMode{화면분할} prevChapter{이전 챕터} prevContents{이전 컨텐츠} nextChapter{다음 챕터} nextContents{다음 컨텐츠} other{}}",
+    "@epubActionBtns": {
+        "description": "Epub 화면의 버튼",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
+    },
     "successMsg": "{msgType, select, saveSattings{설정이 저장되었습니다.} other{}}",
     "@successMsg": {
         "description": "완료 메시지 정의",
@@ -38,7 +47,7 @@
             }
         }
     },
-    "errorMsg": "{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} other{}}",
+    "errorMsg": "{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} emptyAPIInfo{번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.} imageLoadFail{이미지 로드 실패} other{}}",
     "@errorMsg": {
         "description": "에러 메시지 정의",
         "placeholders": {

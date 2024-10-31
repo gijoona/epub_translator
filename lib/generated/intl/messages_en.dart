@@ -20,31 +20,43 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(msgType) => "${Intl.select(msgType, {
-            'noneSelectedFile': 'Plase Selected EPUB File.',
+  static String m0(btnType) => "${Intl.select(btnType, {
+            'viewMode': 'View Mode',
+            'prevChapter': 'Prev Chapter',
+            'prevContents': 'Prev Contents',
+            'nextChapter': 'Next Chapter',
+            'nextContents': 'Next Contents',
             'other': '',
           })}";
 
   static String m1(msgType) => "${Intl.select(msgType, {
+            'noneSelectedFile': 'Plase Selected EPUB File.',
+            'emptyAPIInfo':
+                'To use the translation function, you must enter OPENAI information in settings.',
+            'imageLoadFail': 'Image load failed',
+            'other': '',
+          })}";
+
+  static String m2(msgType) => "${Intl.select(msgType, {
             'saveSattings': 'Settings save complated',
             'other': '',
           })}";
 
-  static String m2(themeMode) => "${Intl.select(themeMode, {
+  static String m3(themeMode) => "${Intl.select(themeMode, {
             'system': 'System',
             'light': 'Light',
             'dark': 'Dark',
             'other': '',
           })}";
 
-  static String m3(language) => "${Intl.select(language, {
+  static String m4(language) => "${Intl.select(language, {
             'ko': 'Korean',
             'ja': 'Japenes',
             'en': 'English',
             'other': '',
           })}";
 
-  static String m4(msgType) => "${Intl.select(msgType, {
+  static String m5(msgType) => "${Intl.select(msgType, {
             'notInvalid': 'Check All Fields.',
             'other': '',
           })}";
@@ -52,7 +64,8 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("E-BOOK Reader"),
-        "errorMsg": m0,
+        "epubActionBtns": m0,
+        "errorMsg": m1,
         "fileOpen": MessageLookupByLibrary.simpleMessage("open EPUB"),
         "filePickerTitle":
             MessageLookupByLibrary.simpleMessage("EPUB File Select"),
@@ -65,12 +78,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsSaveBtn":
             MessageLookupByLibrary.simpleMessage("Save Settings"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
-        "successMsg": m1,
+        "successMsg": m2,
         "themeMode": MessageLookupByLibrary.simpleMessage("Theme Mode"),
-        "themeModeOption": m2,
+        "themeModeOption": m3,
         "translateLanguage":
             MessageLookupByLibrary.simpleMessage("Translate Language"),
-        "translateLanguageOption": m3,
-        "validMsg": m4
+        "translateLanguageOption": m4,
+        "validMsg": m5
       };
 }

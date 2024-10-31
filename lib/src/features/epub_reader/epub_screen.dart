@@ -1,3 +1,4 @@
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/provider/database_provider.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_body_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_widget.dart';
@@ -140,8 +141,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       var apiKey = config.value!['OPENAI_API_KEY'] ?? '';
       if (apiKey.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.'),
+          SnackBar(
+            content: Text(S.of(context).errorMsg('emptyAPIInfo')),
           ),
         );
       } else {
@@ -331,7 +332,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: FontAwesomeIcons.tableColumns,
-                      tooltip: '화면분할',
+                      tooltip: S.of(context).epubActionBtns('viewMode'),
                       onTap: _changeView,
                     ),
                     _buildDivider(),
@@ -339,7 +340,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_left_rounded,
-                      tooltip: '이전 챕터',
+                      tooltip: S.of(context).epubActionBtns('prevChapter'),
                       onTap: () => _changeChapterIndex(-1),
                     ),
                     _buildDivider(),
@@ -347,7 +348,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_left_rounded,
-                      tooltip: '이전 컨텐츠',
+                      tooltip: S.of(context).epubActionBtns('prevContents'),
                       onTap: () => _changeContentsIndex('prev'),
                     ),
                     _buildDivider(),
@@ -355,7 +356,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_arrow_right_rounded,
-                      tooltip: '다음 컨텐츠',
+                      tooltip: S.of(context).epubActionBtns('nextContents'),
                       onTap: () => _changeContentsIndex('next'),
                     ),
                     _buildDivider(),
@@ -363,7 +364,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                       width: (constraints.maxWidth - 4) / 5,
                       height: constraints.maxHeight,
                       icon: Icons.keyboard_double_arrow_right_rounded,
-                      tooltip: '다음 챕터',
+                      tooltip: S.of(context).epubActionBtns('nextChapter'),
                       onTap: () => _changeChapterIndex(1),
                     ),
                   ],

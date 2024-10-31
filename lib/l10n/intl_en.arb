@@ -29,6 +29,15 @@
     "openaiAPIModel": "OPENAI API Model",
     "openaiAPIKey": "OPENAI API Key",
     "openaiAPIPrompt": "Translate Prompt",
+    "epubActionBtns": "{btnType, select, viewMode{View Mode} prevChapter{Prev Chapter} prevContents{Prev Contents} nextChapter{Next Chapter} nextContents{Next Contents} other{}}",
+    "@epubActionBtns": {
+        "description": "Epub Screen Buttons",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
+    },
     "successMsg": "{msgType, select, saveSattings{Settings save complated} other{}}",
     "@successMsg": {
         "description": "Success Message Define",
@@ -38,7 +47,7 @@
             }
         }
     },
-    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} other{}}",
+    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} emptyAPIInfo{To use the translation function, you must enter OPENAI information in settings.} imageLoadFail{Image load failed} other{}}",
     "@errorMsg": {
         "description": "Error Message Define",
         "placeholders": {

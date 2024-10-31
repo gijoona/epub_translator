@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/services/epub_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -34,8 +35,8 @@ class EpubContentsRenderWidget extends ConsumerWidget {
         // ruby 태그 처리
         TagExtension(
           tagsToExtend: {'ruby'},
-          builder: (context) {
-            final rubyElement = context.element; // tree 대신 element로 접근
+          builder: (extensionContext) {
+            final rubyElement = extensionContext.element; // tree 대신 element로 접근
             final rbTexts = rubyElement!.children
                 .where((e) => e.localName == 'rb')
                 .map((e) => e.text)
@@ -88,14 +89,15 @@ class EpubContentsRenderWidget extends ConsumerWidget {
         // image 태그 처리
         TagExtension(
           tagsToExtend: {'img', 'svg'},
-          builder: (context) {
-            var element = context.element;
+          builder: (extensionContext) {
+            var element = extensionContext.element;
             String? src;
             // 표지 등의 이미지의 경우 img가 아닌 svg image로 표시하므로 별도의 처리로직이 필요
-            if (context.elementName == 'svg') {
-              if (context.element!.children.isNotEmpty &&
-                  context.element!.children.first.localName == 'image') {
-                element = context.element!.children.first;
+            if (extensionContext.elementName == 'svg') {
+              if (extensionContext.element!.children.isNotEmpty &&
+                  extensionContext.element!.children.first.localName ==
+                      'image') {
+                element = extensionContext.element!.children.first;
                 var attributeName = element.attributes.keys
                     .firstWhere((key) => key.toString().contains('href'));
                 src = element.attributes[attributeName];
@@ -115,7 +117,7 @@ class EpubContentsRenderWidget extends ConsumerWidget {
                 fit: BoxFit.contain,
               );
             } catch (err) {
-              return const Text('이미지 로드 실패');
+              return Text(S.of(context).errorMsg('imageLoadFail'));
             }
           },
         ),

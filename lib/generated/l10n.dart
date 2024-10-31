@@ -192,6 +192,24 @@ class S {
     );
   }
 
+  /// `{btnType, select, viewMode{화면분할} prevChapter{이전 챕터} prevContents{이전 컨텐츠} nextChapter{다음 챕터} nextContents{다음 컨텐츠} other{}}`
+  String epubActionBtns(String btnType) {
+    return Intl.select(
+      btnType,
+      {
+        'viewMode': '화면분할',
+        'prevChapter': '이전 챕터',
+        'prevContents': '이전 컨텐츠',
+        'nextChapter': '다음 챕터',
+        'nextContents': '다음 컨텐츠',
+        'other': '',
+      },
+      name: 'epubActionBtns',
+      desc: 'Epub 화면의 버튼',
+      args: [btnType],
+    );
+  }
+
   /// `{msgType, select, saveSattings{설정이 저장되었습니다.} other{}}`
   String successMsg(String msgType) {
     return Intl.select(
@@ -206,12 +224,14 @@ class S {
     );
   }
 
-  /// `{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} other{}}`
+  /// `{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} emptyAPIInfo{번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.} imageLoadFail{이미지 로드 실패} other{}}`
   String errorMsg(String msgType) {
     return Intl.select(
       msgType,
       {
         'noneSelectedFile': '선택된 파일이 없습니다.',
+        'emptyAPIInfo': '번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.',
+        'imageLoadFail': '이미지 로드 실패',
         'other': '',
       },
       name: 'errorMsg',
