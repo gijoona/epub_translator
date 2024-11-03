@@ -1,0 +1,68 @@
+{
+    "@@locale": "ja",
+    "appName": "E-BOOKリーダー",
+    "filePickerTitle": "EPUBファイル選択",
+    "fileOpen": "EPUBを開く",
+    "settingsTitle": "設定管理",
+    "settingsSaveBtn": "設定を保存",
+    "themeMode": "テーマモード",
+    "themeModeOption": "{themeMode, select, system{システム} light{ライト} dark{ダーク} other{}}",
+    "@themeModeOption": {
+        "description": "テーマモード選択オプション",
+        "placeholders": {
+            "themeMode": {
+                "type": "String"
+            }
+        }
+    },
+    "translateLanguage": "翻訳言語",
+    "translateLanguageOption": "{language, select, ko{韓国語} ja{日本語} en{英語} other{}}",
+    "@translateLanguageOption": {
+        "description": "翻訳言語選択オプション",
+        "placeholders": {
+            "language": {
+                "type": "String"
+            }
+        }
+    },
+    "openaiAPI": "OPENAI API",
+    "openaiAPIModel": "OPENAI APIモデル",
+    "openaiAPIKey": "OPENAI APIキー",
+    "openaiAPIPrompt": "翻訳プロンプト",
+    "epubActionBtns": "{btnType, select, viewMode{画面分割} prevChapter{前の章} prevContents{前のコンテンツ} nextChapter{次の章} nextContents{次のコンテンツ} other{}}",
+    "@epubActionBtns": {
+        "description": "Epub画面のボタン",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
+    },
+    "successMsg": "{msgType, select, saveSattings{設定が保存されました。} other{}}",
+    "@successMsg": {
+        "description": "完了メッセージの定義",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "errorMsg": "{msgType, select, noneSelectedFile{選択されたファイルがありません。} emptyAPIInfo{翻訳機能を利用するには、設定でOPENAI情報を入力する必要があります。} imageLoadFail{画像の読み込みに失敗しました} other{}}",
+    "@errorMsg": {
+        "description": "エラーメッセージの定義",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    },
+    "validMsg": "{msgType, select, notInvalid{すべてのフィールドを正しく入力してください。} other{}}",
+    "@validMsg": {
+        "description": "検証メッセージの定義",
+        "placeholders": {
+            "msgType": {
+                "type": "String"
+            }
+        }
+    }
+}

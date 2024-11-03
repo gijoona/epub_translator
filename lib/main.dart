@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 Future<void> initializeApp() async {
@@ -21,8 +20,6 @@ Future<void> initializeApp() async {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi; // Initialize the databasefactory
   }
-
-  Intl.defaultLocale = "ko";
 }
 
 void main() async {
@@ -35,7 +32,7 @@ void main() async {
 
     // run app here
     runApp(
-      const ProviderScope(child: MyApp()),
+      ProviderScope(child: MyApp()),
     );
   } catch (err, stacktrace) {
     debugPrint('앱 초기화 실패: $err');
@@ -45,8 +42,15 @@ void main() async {
 
 class MyApp extends ConsumerWidget {
   final bool _debugShowCheckedModeBanner = false;
+  // 다국어지원 설정된 언어일 경우 해당 언어를 가져오고 아니면 기본값으로 ko(한국어)를 가져온다.
+  final Locale _systemLocale = S.delegate.supportedLocales.firstWhere(
+    (locale) =>
+        locale.toString() ==
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+    orElse: () => const Locale('ko'),
+  );
 
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,6 +81,7 @@ class MyApp extends ConsumerWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
             useMaterial3: true,
           ),
+          locale: _systemLocale,
           darkTheme: ThemeData.dark(
             useMaterial3: true,
           ),
