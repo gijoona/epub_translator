@@ -56,14 +56,14 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _systemLocale = _intlLocaleInfo();
+    _systemLocale = _getSystemLocale();
   }
 
   @override
   void didChangeLocales(List<Locale>? locales) {
     super.didChangeLocales(locales);
     setState(() {
-      _systemLocale = _intlLocaleInfo();
+      _systemLocale = _getSystemLocale();
     });
   }
 
@@ -73,7 +73,8 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Locale _intlLocaleInfo() {
+  Locale _getSystemLocale() {
+    // 언어 코드로 로케일을 처리합니다.
     return S.delegate.supportedLocales.firstWhere(
       (locale) =>
           locale.toString() ==
