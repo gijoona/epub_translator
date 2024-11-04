@@ -32,7 +32,7 @@ void main() async {
 
     // run app here
     runApp(
-      ProviderScope(child: MyApp()),
+      const ProviderScope(child: MyApp()),
     );
   } catch (err, stacktrace) {
     debugPrint('앱 초기화 실패: $err');
@@ -40,20 +40,50 @@ void main() async {
   }
 }
 
-class MyApp extends ConsumerWidget {
-  final bool _debugShowCheckedModeBanner = false;
-  // 다국어지원 설정된 언어일 경우 해당 언어를 가져오고 아니면 기본값으로 ko(한국어)를 가져온다.
-  final Locale _systemLocale = S.delegate.supportedLocales.firstWhere(
-    (locale) =>
-        locale.toString() ==
-        WidgetsBinding.instance.platformDispatcher.locale.languageCode,
-    orElse: () => const Locale('ko'),
-  );
-
-  MyApp({super.key});
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  final bool _debugShowCheckedModeBanner = false;
+  // 다국어지원 설정된 언어일 경우 해당 언어를 가져오고 아니면 기본값으로 ko(한국어)를 가져온다.
+  late Locale _systemLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _systemLocale = _intlLocaleInfo();
+  }
+
+  @override
+  void didChangeLocales(List<Locale>? locales) {
+    super.didChangeLocales(locales);
+    setState(() {
+      _systemLocale = _intlLocaleInfo();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Locale _intlLocaleInfo() {
+    return S.delegate.supportedLocales.firstWhere(
+      (locale) =>
+          locale.toString() ==
+          WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+      orElse: () => const Locale('ko'),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: ref.watch(configProvider.notifier).loadAllConfigs(),
       builder: (context, snapshot) {
