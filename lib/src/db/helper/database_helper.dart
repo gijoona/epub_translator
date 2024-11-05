@@ -1,3 +1,4 @@
+import 'package:epub_translator/src/db/models/history_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -103,34 +104,24 @@ class DatabaseHelper {
   }
 
   // history 테이블에 정보 삽입 또는 업데이트. EPUB 파일오픈 or EPUB 컨텐츠 볼 때마다 수행.
-  Future<int> insertOrUpdateHistory(
-    String epubName,
-    String coverImage,
-    String epubPath,
-    String historyJson,
-  ) async {
+  Future<int> insertOrUpdateHistory(HistoryModel history) async {
     final db = await database;
     return await db.insert(
       'history',
-      {
-        'epub_name': epubName,
-        'cover_image': coverImage,
-        'epub_path': epubPath,
-        'last_view_date': DateTime.now().toIso8601String(),
-        'history_json': historyJson,
-      },
+      history.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
   // history　테이블의 모든 항목 가져오기
-  Future<List<Map<String, dynamic>>> getAllHistory() async {
+  Future<List<HistoryModel>> getAllHistory() async {
     final db = await database;
-    return db.query('history');
+    final List<Map<String, dynamic>> result = await db.query('history');
+    return result.map((history) => HistoryModel.fromMap(history)).toList();
   }
 
   // 특정 EPUB파일의 history　항목을 가져오기.
-  Future<Map<String, dynamic>?> getHistoryByEpubName(String epubName) async {
+  Future<HistoryModel?> getHistoryByEpubName(String epubName) async {
     final db = await database;
     final history = await db.query(
       'history',
@@ -139,10 +130,20 @@ class DatabaseHelper {
     );
 
     if (history.isNotEmpty) {
-      return history.first;
+      return HistoryModel.fromMap(history.first);
     } else {
       return null;
     }
+  }
+
+  // history　항목 삭제
+  Future<int> deleteHistory(String epubName) async {
+    final db = await database;
+    return await db.delete(
+      'history',
+      where: 'epub_name = ?',
+      whereArgs: [epubName],
+    );
   }
 
   Future<void> closeDatabase() async {
