@@ -39,6 +39,7 @@ class DatabaseHelper {
       CREATE TABLE history (
         epub_name TEXT PRIMARY KEY,
         cover_image TEXT,
+        epub_path TEXT,
         last_view_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 기본값을 현재시간으로 설정
         history_json TEXT
       )
@@ -51,6 +52,7 @@ class DatabaseHelper {
         CREATE TABLE history (
           epub_name TEXT PRIMARY KEY,
           cover_image TEXT,
+          epub_path TEXT,
           last_view_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 기본값을 현재시간으로 설정
           history_json TEXT
         )
@@ -104,6 +106,7 @@ class DatabaseHelper {
   Future<int> insertOrUpdateHistory(
     String epubName,
     String coverImage,
+    String epubPath,
     String historyJson,
   ) async {
     final db = await database;
@@ -112,6 +115,7 @@ class DatabaseHelper {
       {
         'epub_name': epubName,
         'cover_image': coverImage,
+        'epub_path': epubPath,
         'last_view_date': DateTime.now().toIso8601String(),
         'history_json': historyJson,
       },

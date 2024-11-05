@@ -31,9 +31,18 @@ class HistoryNotifier
 
   // history 정보 삽입 또는 업데이트
   Future<void> saveHistory(
-      String epubName, String coverImage, String historyJson) async {
+    String epubName,
+    String coverImage,
+    String epubPath,
+    String historyJson,
+  ) async {
     try {
-      await dbHelper.insertOrUpdateHistory(epubName, coverImage, historyJson);
+      await dbHelper.insertOrUpdateHistory(
+        epubName,
+        coverImage,
+        epubPath,
+        historyJson,
+      );
       await loadAllHistory(); // 업데이트 후 전체 history 정보 다시 불러오기
     } catch (e, st) {
       state = AsyncValue.error(e, st);
