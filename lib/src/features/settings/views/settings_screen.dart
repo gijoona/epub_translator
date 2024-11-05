@@ -1,5 +1,5 @@
 import 'package:epub_translator/generated/l10n.dart';
-import 'package:epub_translator/src/db/provider/database_provider.dart'; // DatabaseHelper, ConfigNotifier와 관련된 파일
+import 'package:epub_translator/src/db/providers/config_provider.dart'; // DatabaseHelper, ConfigNotifier와 관련된 파일
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

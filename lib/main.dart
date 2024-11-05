@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/router.dart';
-import 'package:epub_translator/src/db/provider/database_provider.dart';
+import 'package:epub_translator/src/db/providers/config_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

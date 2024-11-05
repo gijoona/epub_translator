@@ -1,5 +1,5 @@
 import 'package:epub_translator/generated/l10n.dart';
-import 'package:epub_translator/src/db/provider/database_provider.dart';
+import 'package:epub_translator/src/db/providers/config_provider.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_body_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';

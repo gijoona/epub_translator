@@ -21,8 +21,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'epub_translate.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -34,6 +35,27 @@ class DatabaseHelper {
         value TEXT
       )
     ''');
+    await db.execute('''
+      CREATE TABLE history (
+        epub_name TEXT PRIMARY KEY,
+        cover_image TEXT,
+        last_view_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 기본값을 현재시간으로 설정
+        history_json TEXT
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE history (
+          epub_name TEXT PRIMARY KEY,
+          cover_image TEXT,
+          last_view_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 기본값을 현재시간으로 설정
+          history_json TEXT
+        )
+      ''');
+    }
   }
 
   // 설정 정보 삽입 또는 업데이트
@@ -76,6 +98,47 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getAllConfigs() async {
     final db = await database;
     return await db.query('epub_conf');
+  }
+
+  // history 테이블에 정보 삽입 또는 업데이트. EPUB 파일오픈 or EPUB 컨텐츠 볼 때마다 수행.
+  Future<int> insertOrUpdateHistory(
+    String epubName,
+    String coverImage,
+    String historyJson,
+  ) async {
+    final db = await database;
+    return await db.insert(
+      'history',
+      {
+        'epub_name': epubName,
+        'cover_image': coverImage,
+        'last_view_date': DateTime.now().toIso8601String(),
+        'history_json': historyJson,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // history　테이블의 모든 항목 가져오기
+  Future<List<Map<String, dynamic>>> getAllHistory() async {
+    final db = await database;
+    return db.query('history');
+  }
+
+  // 특정 EPUB파일의 history　항목을 가져오기.
+  Future<Map<String, dynamic>?> getHistoryByEpubName(String epubName) async {
+    final db = await database;
+    final history = await db.query(
+      'history',
+      where: 'epub_name = ?',
+      whereArgs: [epubName],
+    );
+
+    if (history.isNotEmpty) {
+      return history.first;
+    } else {
+      return null;
+    }
   }
 
   Future<void> closeDatabase() async {
