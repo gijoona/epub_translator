@@ -77,4 +77,10 @@ class DatabaseHelper {
     final db = await database;
     return await db.query('epub_conf');
   }
+
+  Future<void> closeDatabase() async {
+    if (_database != null) {
+      await _database!.close();
+    }
+  }
 }
