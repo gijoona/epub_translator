@@ -1,11 +1,17 @@
 {
     "@@locale": "ko",
     "appName": "E-BOOK 리더",
+    "@appName": {},
     "filePickerTitle": "EPUB File 선택",
+    "@filePickerTitle": {},
     "fileOpen": "EPUB 열기",
+    "@fileOpen": {},
     "settingsTitle": "설정 관리",
+    "@settingsTitle": {},
     "settingsSaveBtn": "설정 저장",
+    "@settingsSaveBtn": {},
     "themeMode": "테마 모드",
+    "@themeMode": {},
     "themeModeOption": "{themeMode, select, system{시스템} light{라이트} dark{다크} other{}}",
     "@themeModeOption": {
         "description": "테마모드 선택 옵션",
@@ -16,6 +22,7 @@
         }
     },
     "translateLanguage": "번역 언어",
+    "@translateLanguage": {},
     "translateLanguageOption": "{language, select, ko{한국어} ja{일본어} en{영어} other{}}",
     "@translateLanguageOption": {
         "description": "번역언어 선택 옵션",
@@ -26,9 +33,13 @@
         }
     },
     "openaiAPI": "OPENAI API",
+    "@openaiAPI": {},
     "openaiAPIModel": "OPENAI API 모델",
+    "@openaiAPIModel": {},
     "openaiAPIKey": "OPENAI API 키",
+    "@openaiAPIKey": {},
     "openaiAPIPrompt": "번역 프롬프트",
+    "@openaiAPIPrompt": {},
     "epubActionBtns": "{btnType, select, viewMode{화면분할} prevChapter{이전 챕터} prevContents{이전 컨텐츠} nextChapter{다음 챕터} nextContents{다음 컨텐츠} other{}}",
     "@epubActionBtns": {
         "description": "Epub 화면의 버튼",

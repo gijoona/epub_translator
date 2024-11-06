@@ -17,7 +17,7 @@ class FilePickerScreen extends ConsumerWidget {
   const FilePickerScreen({super.key});
 
   Future<void> _onPressed(BuildContext context, WidgetRef ref) async {
-// File Picker를 통해 EPUB 파일 선택
+    // File Picker를 통해 EPUB 파일 선택
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['epub'],
@@ -27,6 +27,7 @@ class FilePickerScreen extends ConsumerWidget {
       // 선택된 EPUB 파일 load
       String filePath = result.files.single.path!;
       await ref.read(epubControllerProvider.notifier).loadEpub(filePath);
+
       // 새로운 EPUB파일 로드 시 포함된 이미지 파일등의 정보가 변경되므로 이전 번역데이터 초기화.
       ref.read(translatedEpubContentsProvider.notifier).state = [''];
       var book = ref.read(epubBookProvider.notifier).state;

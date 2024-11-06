@@ -5,7 +5,9 @@ import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_
 import 'package:epub_translator/src/features/epub_reader/translation/services/translation_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:html/parser.dart' show parse;
+// ignore: depend_on_referenced_packages
 import 'package:html/dom.dart';
 
 class TranslationController extends AsyncNotifier<String> {

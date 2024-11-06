@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EpubController extends StateNotifier<AsyncValue<void>> {
   final EpubService _epubService;
 
-  EpubController(StateNotifierProviderRef ref)
+  EpubController(Ref ref)
       : _epubService = ref.read(epubServiceProvider),
         super(const AsyncValue.loading());
 

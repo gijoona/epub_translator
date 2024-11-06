@@ -3,6 +3,7 @@ import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:html/parser.dart' show parse;
 import 'dart:convert';
 

@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EpubService {
   late EpubBook _epubBook;
 
-  final ProviderRef ref;
+  final Ref ref;
 
   EpubService(this.ref);
 

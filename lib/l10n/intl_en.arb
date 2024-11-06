@@ -1,11 +1,17 @@
 {
     "@@locale": "en",
     "appName": "E-BOOK Reader",
+    "@appName": {},
     "filePickerTitle": "EPUB File Select",
+    "@filePickerTitle": {},
     "fileOpen": "open EPUB",
+    "@fileOpen": {},
     "settingsTitle": "Settings",
+    "@settingsTitle": {},
     "settingsSaveBtn": "Save Settings",
+    "@settingsSaveBtn": {},
     "themeMode": "Theme Mode",
+    "@themeMode": {},
     "themeModeOption": "{themeMode, select, system{System} light{Light} dark{Dark} other{}}",
     "@themeModeOption": {
         "description": "ThemeMode Options",
@@ -16,6 +22,7 @@
         }
     },
     "translateLanguage": "Translate Language",
+    "@translateLanguage": {},
     "translateLanguageOption": "{language, select, ko{Korean} ja{Japenes} en{English} other{}}",
     "@translateLanguageOption": {
         "description": "Translate Language Options",
@@ -26,9 +33,13 @@
         }
     },
     "openaiAPI": "OPENAI API",
+    "@openaiAPI": {},
     "openaiAPIModel": "OPENAI API Model",
+    "@openaiAPIModel": {},
     "openaiAPIKey": "OPENAI API Key",
+    "@openaiAPIKey": {},
     "openaiAPIPrompt": "Translate Prompt",
+    "@openaiAPIPrompt": {},
     "epubActionBtns": "{btnType, select, viewMode{View Mode} prevChapter{Prev Chapter} prevContents{Prev Contents} nextChapter{Next Chapter} nextContents{Next Contents} other{}}",
     "@epubActionBtns": {
         "description": "Epub Screen Buttons",

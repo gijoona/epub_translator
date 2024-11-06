@@ -5,6 +5,7 @@ import 'package:epub_translator/src/features/epub_reader/origintext/services/epu
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// ignore: implementation_imports, library_prefixes
 import 'package:flutter/src/widgets/image.dart' as Images;
 
 class EpubContentsRenderWidget extends ConsumerWidget {

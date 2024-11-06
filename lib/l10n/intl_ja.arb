@@ -1,11 +1,17 @@
 {
     "@@locale": "ja",
     "appName": "E-BOOKリーダー",
+    "@appName": {},
     "filePickerTitle": "EPUBファイル選択",
+    "@filePickerTitle": {},
     "fileOpen": "EPUBを開く",
+    "@fileOpen": {},
     "settingsTitle": "設定管理",
+    "@settingsTitle": {},
     "settingsSaveBtn": "設定を保存",
+    "@settingsSaveBtn": {},
     "themeMode": "テーマモード",
+    "@themeMode": {},
     "themeModeOption": "{themeMode, select, system{システム} light{ライト} dark{ダーク} other{}}",
     "@themeModeOption": {
         "description": "テーマモード選択オプション",
@@ -16,6 +22,7 @@
         }
     },
     "translateLanguage": "翻訳言語",
+    "@translateLanguage": {},
     "translateLanguageOption": "{language, select, ko{韓国語} ja{日本語} en{英語} other{}}",
     "@translateLanguageOption": {
         "description": "翻訳言語選択オプション",
@@ -26,9 +33,13 @@
         }
     },
     "openaiAPI": "OPENAI API",
+    "@openaiAPI": {},
     "openaiAPIModel": "OPENAI APIモデル",
+    "@openaiAPIModel": {},
     "openaiAPIKey": "OPENAI APIキー",
+    "@openaiAPIKey": {},
     "openaiAPIPrompt": "翻訳プロンプト",
+    "@openaiAPIPrompt": {},
     "epubActionBtns": "{btnType, select, viewMode{画面分割} prevChapter{前の章} prevContents{前のコンテンツ} nextChapter{次の章} nextContents{次のコンテンツ} other{}}",
     "@epubActionBtns": {
         "description": "Epub画面のボタン",
