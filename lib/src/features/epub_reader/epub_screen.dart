@@ -66,13 +66,93 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     final jsonData = jsonDecode(historyJson);
     if (jsonData['last_view_index'] != 0) {
       showModalBottomSheet(
+        clipBehavior: Clip.hardEdge,
         context: context,
         builder: (context) {
-          return SizedBox(
-            width: 200,
-            height: 100,
-            child: Text(
-                '이전에 보던 챕터가 있습니다. 이어보시겠습니다? ${jsonData['last_view_index']}'),
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            height: 170,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  Text(
+                    '이전에 보던 챕터가 있습니다.',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: FilledButton(
+                          style: ButtonStyle(
+                            shape: WidgetStateProperty.all(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  bottomLeft: Radius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Center(
+                            child: Text(
+                              '처음부터',
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .fontSize,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 2,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            shape: WidgetStateProperty.all(
+                              const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10.0),
+                                  bottomRight: Radius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            _pageController
+                                .jumpToPage(jsonData['last_view_index']);
+                            Navigator.pop(context);
+                          },
+                          child: Center(
+                            child: Text(
+                              '이어본다.',
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .fontSize,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           );
         },
       );

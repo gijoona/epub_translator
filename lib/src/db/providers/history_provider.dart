@@ -29,7 +29,7 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
         state = AsyncValue.data(history);
         return history;
       } else {
-        throw Exception('열람이력이 없습니다.');
+        return null;
       }
     } catch (e, st) {
       state = AsyncError(e, st);
