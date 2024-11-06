@@ -24,4 +24,4 @@ final routerConfig = GoRouter(
   ],
 );
 
-final routerProvider = Provider<GoRouter>((rer) => routerConfig);
+final routerProvider = Provider<GoRouter>((ref) => routerConfig);

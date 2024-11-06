@@ -97,11 +97,11 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           );
         }
 
-        final config = ref.watch(configProvider);
-        var theme = '0';
-        if (config.hasValue) {
-          theme = config.value!['APP_THEMEMODE'] ?? '0';
-        }
+        // final config = ref.read(configProvider);
+        var theme = '2';
+        // if (config.hasValue) {
+        //   theme = config.value!['APP_THEMEMODE'] ?? '0';
+        // }
 
         // 설정이 완료된 후에 앱을 정상적으로 실행
         return MaterialApp.router(

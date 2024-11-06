@@ -23,7 +23,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final TextEditingController _promptController = TextEditingController();
   var _themeMode = ThemeMode.system;
   var _targetLanguage = 'ko';
-  final List<bool> _isOpen = [true, true, false];
+  final List<bool> _isOpen = [true, false];
+  bool isVisible = false;
 
   // Form의 상태를 관리하는 GlobalKey
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -118,42 +119,45 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: ExpansionPanelList(
             elevation: 0,
             children: [
-              ExpansionPanel(
-                headerBuilder: (context, isExpanded) => Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Text(S.of(context).themeMode),
+              if (isVisible)
+                ExpansionPanel(
+                  canTapOnHeader: true,
+                  headerBuilder: (context, isExpanded) => Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(S.of(context).themeMode),
+                  ),
+                  body: SegmentedButton(
+                    segments: [
+                      ButtonSegment<ThemeMode>(
+                        value: ThemeMode.system,
+                        label: Text(S.of(context).themeModeOption('system')),
+                        icon: const FaIcon(FontAwesomeIcons.circleHalfStroke),
+                      ),
+                      ButtonSegment<ThemeMode>(
+                        value: ThemeMode.light,
+                        label: Text(S.of(context).themeModeOption('light')),
+                        icon: const FaIcon(FontAwesomeIcons.sun),
+                      ),
+                      ButtonSegment<ThemeMode>(
+                        value: ThemeMode.dark,
+                        label: Text(S.of(context).themeModeOption('dark')),
+                        icon: const FaIcon(FontAwesomeIcons.moon),
+                      ),
+                    ],
+                    selected: {_themeMode},
+                    onSelectionChanged: (Set<ThemeMode> newSelection) {
+                      setState(() {
+                        // By default there is only a single segment that can be
+                        // selected at one time, so its value is always the first
+                        // item in the selected set.
+                        _themeMode = newSelection.first;
+                      });
+                    },
+                  ),
+                  isExpanded: _isOpen[0],
                 ),
-                body: SegmentedButton(
-                  segments: [
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.system,
-                      label: Text(S.of(context).themeModeOption('system')),
-                      icon: const FaIcon(FontAwesomeIcons.circleHalfStroke),
-                    ),
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.light,
-                      label: Text(S.of(context).themeModeOption('light')),
-                      icon: const FaIcon(FontAwesomeIcons.sun),
-                    ),
-                    ButtonSegment<ThemeMode>(
-                      value: ThemeMode.dark,
-                      label: Text(S.of(context).themeModeOption('dark')),
-                      icon: const FaIcon(FontAwesomeIcons.moon),
-                    ),
-                  ],
-                  selected: {_themeMode},
-                  onSelectionChanged: (Set<ThemeMode> newSelection) {
-                    setState(() {
-                      // By default there is only a single segment that can be
-                      // selected at one time, so its value is always the first
-                      // item in the selected set.
-                      _themeMode = newSelection.first;
-                    });
-                  },
-                ),
-                isExpanded: _isOpen[0],
-              ),
               ExpansionPanel(
+                canTapOnHeader: true,
                 headerBuilder: (context, isExpanded) => Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(S.of(context).translateLanguage),
@@ -186,9 +190,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     });
                   },
                 ),
-                isExpanded: _isOpen[1],
+                isExpanded: _isOpen[0],
               ),
               ExpansionPanel(
+                canTapOnHeader: true,
                 headerBuilder: (context, isExpanded) => Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(S.of(context).openaiAPI),
@@ -222,7 +227,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                   ),
                 ),
-                isExpanded: _isOpen[2],
+                isExpanded: _isOpen[1],
               ),
             ],
             expansionCallback: (i, isOpen) =>
