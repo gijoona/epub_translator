@@ -18,14 +18,14 @@ class EpubBodyWidget extends ConsumerStatefulWidget {
     required EpubViewMode viewMode,
     required this.contentsNum,
     required this.scrollController,
-    this.onScrollUpdate,
+    this.updateScrollProgress,
   }) : _viewMode = viewMode;
 
   final String caption;
   final EpubViewMode _viewMode;
   final int contentsNum;
   final ScrollController scrollController;
-  final ScrollUpdateCallback? onScrollUpdate;
+  final ScrollUpdateCallback? updateScrollProgress;
 
   @override
   ConsumerState<EpubBodyWidget> createState() => _EpubBodyWidgetState();
@@ -47,7 +47,7 @@ class _EpubBodyWidgetState extends ConsumerState<EpubBodyWidget> {
     if (_scrollController.hasClients &&
         _scrollController.positions.length == 1 &&
         _scrollController.position.maxScrollExtent > 0) {
-      widget.onScrollUpdate?.call(controller: _scrollController);
+      widget.updateScrollProgress?.call(controller: _scrollController);
     }
   }
 

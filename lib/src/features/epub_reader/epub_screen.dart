@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/providers/config_provider.dart';
 import 'package:epub_translator/src/db/providers/history_provider.dart';
+import 'package:epub_translator/src/features/epub_reader/widgets/continue_reading_dialog_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_body_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -37,6 +38,7 @@ class EpubScreen extends ConsumerStatefulWidget {
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
   final PageController _pageController = PageController();
+  final Map<int, ScrollController> _scrollControllers = {};
   late ScrollController _contentScrollController;
 
   EpubViewMode _viewMode = EpubViewMode.original;
@@ -48,7 +50,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   double _childMaxScrollExtent = 0.0;
 
   // 페이지별로 ScrollController를 관리하는 Map
-  final Map<int, ScrollController> _scrollControllers = {};
 
   @override
   void initState() {
@@ -58,122 +59,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     _contentScrollController = _getScrollController(0);
 
     WidgetsBinding.instance
-        .addPostFrameCallback((_) => _continueReadingConfirm(context));
-  }
-
-  void _continueReadingConfirm(BuildContext context) {
-    final historyJson = ref.read(historyProvider).value!.historyJson;
-    final jsonData = jsonDecode(historyJson);
-    if (jsonData['last_view_index'] != 0) {
-      showModalBottomSheet(
-        clipBehavior: Clip.hardEdge,
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-            height: 170,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
-            ),
-            child: Center(
-              child: Column(
-                children: [
-                  Text(
-                    '이전에 보던 챕터가 있습니다.',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        flex: 1,
-                        child: FilledButton(
-                          style: ButtonStyle(
-                            shape: WidgetStateProperty.all(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  bottomLeft: Radius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Center(
-                            child: Text(
-                              '처음부터',
-                              style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            shape: WidgetStateProperty.all(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(10.0),
-                                  bottomRight: Radius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            _pageController
-                                .jumpToPage(jsonData['last_view_index']);
-                            Navigator.pop(context);
-                          },
-                          child: Center(
-                            child: Text(
-                              '이어본다.',
-                              style: TextStyle(
-                                fontSize: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
-  }
-
-  void _onScrollUpdate({
-    required ScrollController controller,
-    double offset = 0.0,
-  }) {
-    var scrollProgress = 0.0;
-    if (controller.hasClients && controller.position.maxScrollExtent > 0) {
-      // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
-      final currentScrollOffset = controller.offset;
-      _childMaxScrollExtent = controller.position.maxScrollExtent;
-
-      scrollProgress =
-          (currentScrollOffset / _childMaxScrollExtent).clamp(0.0, 1.0);
-    }
-
-    ref.read(scrollProgressProvider.notifier).state = scrollProgress;
+        .addPostFrameCallback((_) => _showContinueReadingPrompt());
   }
 
   Future<void> loadEpubBook() async {
@@ -185,55 +71,67 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   ScrollController _getScrollController(int pageIndex) {
     // 페이지 인덱스에 해당하는 ScrollController를 반환하거나 생성
-    if (!_scrollControllers.containsKey(pageIndex)) {
-      _scrollControllers[pageIndex] = ScrollController();
-    }
+    _scrollControllers.putIfAbsent(pageIndex, () => ScrollController());
     return _scrollControllers[pageIndex]!;
   }
 
+  void _showContinueReadingPrompt() {
+    final historyJson = ref.read(historyProvider).value!.historyJson;
+    final jsonData = jsonDecode(historyJson);
+    if (jsonData['last_view_index'] != 0) {
+      showModalBottomSheet(
+        clipBehavior: Clip.hardEdge,
+        context: context,
+        builder: (context) {
+          return ContinueReadingDialog(
+              pageController: _pageController, jsonData: jsonData);
+        },
+      );
+    }
+  }
+
   void _changeContentsIndex(String cmd) {
+    Duration duration = const Duration(milliseconds: 300);
+    Curve curve = Curves.linear;
     switch (cmd) {
       case 'prev':
-        _pageController.previousPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.linear,
-        );
+        _pageController.previousPage(duration: duration, curve: curve);
         break;
       case 'next':
-        _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.linear,
-        );
+        _pageController.nextPage(duration: duration, curve: curve);
         break;
     }
   }
 
   void _changeChapterIndex(int addIndex) {
-    var epubInfo = ref.read(epubContentProvider.notifier).state!;
-    var currChapterIdx = 0;
-    if (epubInfo.chapter != null) {
-      currChapterIdx = epubInfo.chapters.indexOf(epubInfo.chapter!);
-    }
+    final epubInfo = ref.read(epubContentProvider.notifier).state!;
+    final currChapterIdx = epubInfo.chapter == null
+        ? 0
+        : epubInfo.chapters.indexOf(epubInfo.chapter!);
 
-    int chgChapterIdx =
+    int newChapterIdx =
         (currChapterIdx + addIndex).clamp(0, epubInfo.chapters.length - 1);
-    var chgChapter = epubInfo.chapters.elementAt(chgChapterIdx);
-    var chgContentIdx =
-        _book!.contents.keys.toList().indexOf(chgChapter.ContentFileName!);
+    var newChapter = epubInfo.chapters.elementAt(newChapterIdx);
+    var newContentIdx =
+        _book!.contents.keys.toList().indexOf(newChapter.ContentFileName!);
 
-    _pageController.jumpToPage(chgContentIdx);
+    _pageController.jumpToPage(newContentIdx);
   }
 
-  void _onContentsChange(int pageNum) {
-    // 현재 열람 중인 Contents의 index(pageNum)을 history에 갱신한다.
-    var history = ref.read(historyProvider).value!.copyWith(
-          historyJson:
-              jsonEncode(<String, dynamic>{'last_view_index': pageNum}),
-        );
-    ref.read(historyProvider.notifier).saveHistory(history);
+  void _updateScrollProgress({required ScrollController controller}) {
+    if (controller.hasClients && controller.position.maxScrollExtent > 0) {
+      // 스크롤이 진행될 때마다 현재 스크롤 위치와 전체 높이를 계산하여 진행 상태를 업데이트
+      final currentScrollOffset = controller.offset;
+      _childMaxScrollExtent = controller.position.maxScrollExtent;
+      final progress =
+          (currentScrollOffset / _childMaxScrollExtent).clamp(0.0, 1.0);
+      ref.read(scrollProgressProvider.notifier).state = progress;
+    }
+  }
 
-    var epubInfo = ref.read(epubContentProvider.notifier).state!;
-    var contentFileName = _book!.contents.keys.elementAt(pageNum);
+  void _updateContents(int pageNum) {
+    final epubInfo = ref.read(epubContentProvider.notifier).state!;
+    final contentFileName = _book!.contents.keys.elementAt(pageNum);
     _chapter = epubInfo.chapters.firstWhere(
       (chapter) => chapter.ContentFileName == contentFileName,
       orElse: () => _chapter ?? EpubChapter(),
@@ -244,6 +142,15 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
       chapter: _chapter,
       content: epubInfo.contents[pageNum],
     );
+  }
+
+  void _updateHistory(int pageNum) {
+    // 현재 열람 중인 Contents의 index(pageNum)을 history에 갱신한다.
+    final history = ref.read(historyProvider).value!.copyWith(
+          historyJson:
+              jsonEncode(<String, dynamic>{'last_view_index': pageNum}),
+        );
+    ref.read(historyProvider.notifier).saveHistory(history);
   }
 
   void _translateBook() async {
@@ -303,8 +210,9 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   void _onPageChanged(int page) {
     _contentScrollController = _getScrollController(page);
-    _onScrollUpdate(controller: _contentScrollController);
-    _onContentsChange(page);
+    _updateScrollProgress(controller: _contentScrollController);
+    _updateContents(page);
+    _updateHistory(page);
   }
 
   @override
@@ -340,21 +248,21 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                     viewMode: _viewMode,
                     contentsNum: contentsNum,
                     scrollController: scrollController,
-                    onScrollUpdate: _onScrollUpdate,
+                    updateScrollProgress: _updateScrollProgress,
                   );
                 },
               ),
               // 현재 컨텐츠정보를 보여줌. (현재 Contents 번호 / 전체 Contents 번호)
               Consumer(builder: (context, ref, child) {
                 var isVisible = ref.watch(visibleFABProvider);
-                return !isVisible
-                    ? Container()
-                    : Positioned(
+                return isVisible
+                    ? Positioned(
                         top: 70,
                         right: 10,
                         child:
                             EpubPageNumWidget(maxContentsIdx: _maxContentsIdx),
-                      );
+                      )
+                    : Container();
               }),
               // 번역 중임을 나타내는 LinearProgressIndicator
               if (_isTranslating)
@@ -402,9 +310,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   Widget _buildSpeedDial() {
     return Consumer(builder: (context, ref, child) {
       var isVislble = ref.watch(visibleFABProvider);
-      return !isVislble
-          ? const SizedBox(height: 0)
-          : SpeedDial(
+      return isVislble
+          ? SpeedDial(
               heroTag: 'speed-dial-hero-tag',
               // icon: Icons.translate,
               // activeIcon: Icons.close,
@@ -420,7 +327,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
               child: _isTranslating
                   ? const CircularProgressIndicator()
                   : const Icon(Icons.translate),
-            );
+            )
+          : const SizedBox(height: 0);
     });
   }
 
@@ -428,9 +336,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   Widget _buildBottomAppBar() {
     return Consumer(builder: (context, ref, child) {
       var isVislble = ref.watch(visibleFABProvider);
-      return !isVislble
-          ? const SizedBox(height: 0)
-          : BottomAppBar(
+      return isVislble
+          ? BottomAppBar(
               height: 55, // 기본 BottomAppBar는 height가 너무 커서 고정크기 부여
               shape: const CircularNotchedRectangle(),
               notchMargin: 8.0,
@@ -481,7 +388,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
                   ],
                 ),
               ),
-            );
+            )
+          : const SizedBox(height: 0);
     });
   }
 
