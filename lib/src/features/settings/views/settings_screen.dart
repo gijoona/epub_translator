@@ -66,6 +66,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final apiKey = _apiKeyController.text;
       final prompt = _promptController.text;
 
+      // TODO ThemeMode 저장부분
       configNotifier.saveConfig('APP_THEMEMODE', theme);
       configNotifier.saveConfig('TRANSLATION_LANGUAGE', language);
       configNotifier.saveConfig('OPENAI_API_MODEL', model);
@@ -119,6 +120,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           child: ExpansionPanelList(
             elevation: 0,
             children: [
+              // TODO ThemeMode　설정 UI.
               if (isVisible)
                 ExpansionPanel(
                   canTapOnHeader: true,

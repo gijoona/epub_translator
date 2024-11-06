@@ -97,7 +97,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           );
         }
 
-        // final config = ref.read(configProvider);
+        /// TODO 저장된 ThemeMode를 반영하기 위해 configProvider를 Watch하는 부분. watch - configProvider의 변경을 감지해서 ThemeMode를 즉각 갱신. read - 갱신을 감지하지 못하므로 설정에서 변경/저장해도 재시작하지 않으면 반영안됨.
+        /// 문제는 watch 시 epubScreen, settingsScreen 둘 다 새로 build 됨에 따라 setting 저장 시 epubScreen의 initState가 재호출되어서 epub를 다시 로드, 이어보기 체크를 재수행하는 등의 오작동을 일으킴.
+        // final config = ref.watch(configProvider);
         var theme = '2';
         // if (config.hasValue) {
         //   theme = config.value!['APP_THEMEMODE'] ?? '0';
