@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:epub_translator/generated/l10n.dart';
+import 'package:epub_translator/src/db/models/history_model.dart';
+import 'package:epub_translator/src/db/providers/history_provider.dart';
+import 'package:epub_translator/src/features/common/utils/utils.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -30,9 +35,11 @@ class FilePickerScreen extends ConsumerWidget {
 
       // 새로운 EPUB파일 로드 시 포함된 이미지 파일등의 정보가 변경되므로 이전 번역데이터 초기화.
       ref.read(translatedEpubContentsProvider.notifier).state = [''];
-      var book = ref.read(epubBookProvider.notifier).state;
+      final book = ref.read(epubBookProvider.notifier).state;
 
       if (book != null) {
+        await saveHistory(ref, book);
+
         Map<String, List<String>> translatesMap = {};
         for (var value in book.contents.values.indexed) {
           translatesMap['${value.$1}'] = [value.$2.Content ?? ''];
@@ -59,6 +66,29 @@ class FilePickerScreen extends ConsumerWidget {
         ),
       );
     }
+  }
+
+  Future<void> saveHistory(WidgetRef ref, EpubBookModel book) async {
+    final bookHistory =
+        await ref.read(historyProvider.notifier).getHistory(book.title);
+
+    var historyModel = HistoryModel.empty();
+    if (bookHistory != null) {
+      historyModel = historyModel.copyWith(
+        epubName: bookHistory.epubName,
+        coverImage: bookHistory.coverImage,
+        historyJson: bookHistory.historyJson,
+      );
+    } else {
+      final historyJson = jsonEncode(<String, dynamic>{'last_view_index': 0});
+      historyModel = historyModel.copyWith(
+        epubName: book.title,
+        coverImage: Utils.getImageAsBase64(book.images.values.first),
+        historyJson: historyJson,
+      );
+    }
+
+    ref.read(historyProvider.notifier).saveHistory(historyModel);
   }
 
   @override

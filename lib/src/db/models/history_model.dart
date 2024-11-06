@@ -7,9 +7,16 @@ class HistoryModel {
   HistoryModel({
     required this.epubName,
     required this.coverImage,
-    required this.lastViewDate,
+    DateTime? lastViewDate,
     required this.historyJson,
-  });
+  }) : lastViewDate = lastViewDate ?? DateTime.now();
+
+  // 빈 객체를 반환하는 기본 생성자
+  HistoryModel.empty()
+      : epubName = '',
+        coverImage = '',
+        lastViewDate = DateTime.now(),
+        historyJson = '{}';
 
   // JSON 데이터를 HistoryModel 객체로 변환하는 팩토리 메서드
   factory HistoryModel.fromMap(Map<String, dynamic> map) {

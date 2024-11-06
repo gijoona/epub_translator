@@ -108,10 +108,9 @@ class EpubContentsRenderWidget extends ConsumerWidget {
             }
 
             try {
-              final base64Image =
-                  ref.read(epubServiceProvider).getImageAsBase64(
-                        '$src',
-                      );
+              final base64Image = ref.read(epubServiceProvider).getImage(
+                    '$src',
+                  );
 
               return Images.Image.memory(
                 base64Decode(base64Image.split(',').last),

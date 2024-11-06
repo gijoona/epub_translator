@@ -22,12 +22,18 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
   }
 
   // 특정 EPUB의 history 정보를 불러오는 메서드
-  Future<void> getHistory(String epubName) async {
+  Future<HistoryModel?> getHistory(String epubName) async {
     try {
       final history = await dbHelper.getHistoryByEpubName(epubName);
-      state = AsyncValue.data(history);
+      if (history != null) {
+        state = AsyncValue.data(history);
+        return history;
+      } else {
+        throw Exception('열람이력이 없습니다.');
+      }
     } catch (e, st) {
       state = AsyncError(e, st);
+      return null;
     }
   }
 

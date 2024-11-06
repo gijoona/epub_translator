@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/providers/config_provider.dart';
+import 'package:epub_translator/src/db/providers/history_provider.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_body_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -53,6 +56,27 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
     loadEpubBook();
 
     _contentScrollController = _getScrollController(0);
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _continueReadingConfirm(context));
+  }
+
+  void _continueReadingConfirm(BuildContext context) {
+    final historyJson = ref.read(historyProvider).value!.historyJson;
+    final jsonData = jsonDecode(historyJson);
+    if (jsonData['last_view_index'] != 0) {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SizedBox(
+            width: 200,
+            height: 100,
+            child: Text(
+                '이전에 보던 챕터가 있습니다. 이어보시겠습니다? ${jsonData['last_view_index']}'),
+          );
+        },
+      );
+    }
   }
 
   void _onScrollUpdate({
@@ -121,6 +145,13 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _onContentsChange(int pageNum) {
+    // 현재 열람 중인 Contents의 index(pageNum)을 history에 갱신한다.
+    var history = ref.read(historyProvider).value!.copyWith(
+          historyJson:
+              jsonEncode(<String, dynamic>{'last_view_index': pageNum}),
+        );
+    ref.read(historyProvider.notifier).saveHistory(history);
+
     var epubInfo = ref.read(epubContentProvider.notifier).state!;
     var contentFileName = _book!.contents.keys.elementAt(pageNum);
     _chapter = epubInfo.chapters.firstWhere(
@@ -208,8 +239,8 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var bookInfo = ref.read(epubBookProvider.notifier).state;
-    var caption =
+    final bookInfo = ref.read(epubBookProvider.notifier).state;
+    final caption =
         bookInfo != null ? '${bookInfo.title} (${bookInfo.author})' : '';
     return SafeArea(
       child: Scaffold(
