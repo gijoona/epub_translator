@@ -21,6 +21,17 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ja';
 
   static String m0(btnType) => "${Intl.select(btnType, {
+            'first': '最初から',
+            'continue': '続ける',
+            'other': '',
+          })}";
+
+  static String m1(dialogType) => "${Intl.select(dialogType, {
+            'continueReading': '前回読んでいた章があります。',
+            'other': '',
+          })}";
+
+  static String m2(btnType) => "${Intl.select(btnType, {
             'viewMode': '画面分割',
             'prevChapter': '前の章',
             'prevContents': '前のコンテンツ',
@@ -29,33 +40,33 @@ class MessageLookup extends MessageLookupByLibrary {
             'other': '',
           })}";
 
-  static String m1(msgType) => "${Intl.select(msgType, {
+  static String m3(msgType) => "${Intl.select(msgType, {
             'noneSelectedFile': '選択されたファイルがありません。',
             'emptyAPIInfo': '翻訳機能を利用するには、設定でOPENAI情報を入力する必要があります。',
             'imageLoadFail': '画像の読み込みに失敗しました',
             'other': '',
           })}";
 
-  static String m2(msgType) => "${Intl.select(msgType, {
+  static String m4(msgType) => "${Intl.select(msgType, {
             'saveSattings': '設定が保存されました。',
             'other': '',
           })}";
 
-  static String m3(themeMode) => "${Intl.select(themeMode, {
+  static String m5(themeMode) => "${Intl.select(themeMode, {
             'system': 'システム',
             'light': 'ライト',
             'dark': 'ダーク',
             'other': '',
           })}";
 
-  static String m4(language) => "${Intl.select(language, {
+  static String m6(language) => "${Intl.select(language, {
             'ko': '韓国語',
             'ja': '日本語',
             'en': '英語',
             'other': '',
           })}";
 
-  static String m5(msgType) => "${Intl.select(msgType, {
+  static String m7(msgType) => "${Intl.select(msgType, {
             'notInvalid': 'すべてのフィールドを正しく入力してください。',
             'other': '',
           })}";
@@ -63,8 +74,10 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("E-BOOKリーダー"),
-        "epubActionBtns": m0,
-        "errorMsg": m1,
+        "dialogActionBtns": m0,
+        "dialogTitle": m1,
+        "epubActionBtns": m2,
+        "errorMsg": m3,
         "fileOpen": MessageLookupByLibrary.simpleMessage("EPUBを開く"),
         "filePickerTitle": MessageLookupByLibrary.simpleMessage("EPUBファイル選択"),
         "openaiAPI": MessageLookupByLibrary.simpleMessage("OPENAI API"),
@@ -73,11 +86,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "openaiAPIPrompt": MessageLookupByLibrary.simpleMessage("翻訳プロンプト"),
         "settingsSaveBtn": MessageLookupByLibrary.simpleMessage("設定を保存"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("設定管理"),
-        "successMsg": m2,
+        "successMsg": m4,
         "themeMode": MessageLookupByLibrary.simpleMessage("テーマモード"),
-        "themeModeOption": m3,
+        "themeModeOption": m5,
         "translateLanguage": MessageLookupByLibrary.simpleMessage("翻訳言語"),
-        "translateLanguageOption": m4,
-        "validMsg": m5
+        "translateLanguageOption": m6,
+        "validMsg": m7
       };
 }

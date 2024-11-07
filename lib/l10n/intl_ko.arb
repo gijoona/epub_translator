@@ -75,5 +75,23 @@
                 "type": "String"
             }
         }
+    },
+    "dialogTitle": "{dialogType, select, continueReading{이전에 보던 챕터가 있습니다.} other{}}",
+    "@dialogTitle": {
+        "description": "Dialog 타이틀",
+        "placeholders": {
+            "dialogType": {
+                "type": "String"
+            }
+        }
+    },
+    "dialogActionBtns": "{btnType, select, first{처음부터} continue{이어본다} other{}}",
+    "@dialogActionBtns": {
+        "description": "Dialog의 버튼",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
     }
 }

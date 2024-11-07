@@ -75,5 +75,23 @@
                 "type": "String"
             }
         }
+    },
+    "dialogTitle": "{dialogType, select, continueReading{You have a previous chapter.} other{}}",
+    "@dialogTitle": {
+        "description": "Dialog title",
+        "placeholders": {
+            "dialogType": {
+                "type": "String"
+            }
+        }
+    },
+    "dialogActionBtns": "{btnType, select, first{From start} continue{Continue} other{}}",
+    "@dialogActionBtns": {
+        "description": "Dialog buttons",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
     }
 }

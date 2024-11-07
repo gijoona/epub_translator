@@ -1,3 +1,4 @@
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ContinueReadingDialog extends StatelessWidget {
@@ -13,16 +14,16 @@ class ContinueReadingDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      height: 170,
+      padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+      height: 162,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: Theme.of(context).colorScheme.secondaryContainer,
       ),
       child: Center(
         child: Column(
           children: [
             Text(
-              '이전에 보던 챕터가 있습니다.',
+              S.of(context).dialogTitle('continueReading'),
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const Divider(),
@@ -30,9 +31,10 @@ class ContinueReadingDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  flex: 1,
+                  flex: 2,
                   child: FilledButton(
                     style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(const Size(20, 70)),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -47,7 +49,7 @@ class ContinueReadingDialog extends StatelessWidget {
                     },
                     child: Center(
                       child: Text(
-                        '처음부터',
+                        S.of(context).dialogActionBtns('first'),
                         style: TextStyle(
                           fontSize:
                               Theme.of(context).textTheme.bodyLarge!.fontSize,
@@ -58,9 +60,10 @@ class ContinueReadingDialog extends StatelessWidget {
                   ),
                 ),
                 Flexible(
-                  flex: 2,
+                  flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
+                      minimumSize: WidgetStateProperty.all(const Size(30, 70)),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -76,7 +79,7 @@ class ContinueReadingDialog extends StatelessWidget {
                     },
                     child: Center(
                       child: Text(
-                        '이어본다.',
+                        S.of(context).dialogActionBtns('continue'),
                         style: TextStyle(
                           fontSize:
                               Theme.of(context).textTheme.bodyLarge!.fontSize,

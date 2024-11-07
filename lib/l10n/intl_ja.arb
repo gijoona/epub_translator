@@ -75,5 +75,23 @@
                 "type": "String"
             }
         }
+    },
+    "dialogTitle": "{dialogType, select, continueReading{前回読んでいた章があります。} other{}}",
+    "@dialogTitle": {
+        "description": "ダイアログタイトル",
+        "placeholders": {
+            "dialogType": {
+                "type": "String"
+            }
+        }
+    },
+    "dialogActionBtns": "{btnType, select, first{最初から} continue{続ける} other{}}",
+    "@dialogActionBtns": {
+        "description": "ダイアログのボタン",
+        "placeholders": {
+            "btnType": {
+                "type": "String"
+            }
+        }
     }
 }

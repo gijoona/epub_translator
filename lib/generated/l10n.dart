@@ -253,6 +253,35 @@ class S {
       args: [msgType],
     );
   }
+
+  /// `{dialogType, select, continueReading{이전에 보던 챕터가 있습니다.} other{}}`
+  String dialogTitle(String dialogType) {
+    return Intl.select(
+      dialogType,
+      {
+        'continueReading': '이전에 보던 챕터가 있습니다.',
+        'other': '',
+      },
+      name: 'dialogTitle',
+      desc: 'Dialog 타이틀',
+      args: [dialogType],
+    );
+  }
+
+  /// `{btnType, select, first{처음부터} continue{이어본다} other{}}`
+  String dialogActionBtns(String btnType) {
+    return Intl.select(
+      btnType,
+      {
+        'first': '처음부터',
+        'continue': '이어본다',
+        'other': '',
+      },
+      name: 'dialogActionBtns',
+      desc: 'Dialog의 버튼',
+      args: [btnType],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

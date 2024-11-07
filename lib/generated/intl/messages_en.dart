@@ -21,6 +21,17 @@ class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
   static String m0(btnType) => "${Intl.select(btnType, {
+            'first': 'From start',
+            'continue': 'Continue',
+            'other': '',
+          })}";
+
+  static String m1(dialogType) => "${Intl.select(dialogType, {
+            'continueReading': 'You have a previous chapter.',
+            'other': '',
+          })}";
+
+  static String m2(btnType) => "${Intl.select(btnType, {
             'viewMode': 'View Mode',
             'prevChapter': 'Prev Chapter',
             'prevContents': 'Prev Contents',
@@ -29,7 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
             'other': '',
           })}";
 
-  static String m1(msgType) => "${Intl.select(msgType, {
+  static String m3(msgType) => "${Intl.select(msgType, {
             'noneSelectedFile': 'Plase Selected EPUB File.',
             'emptyAPIInfo':
                 'To use the translation function, you must enter OPENAI information in settings.',
@@ -37,26 +48,26 @@ class MessageLookup extends MessageLookupByLibrary {
             'other': '',
           })}";
 
-  static String m2(msgType) => "${Intl.select(msgType, {
+  static String m4(msgType) => "${Intl.select(msgType, {
             'saveSattings': 'Settings save complated',
             'other': '',
           })}";
 
-  static String m3(themeMode) => "${Intl.select(themeMode, {
+  static String m5(themeMode) => "${Intl.select(themeMode, {
             'system': 'System',
             'light': 'Light',
             'dark': 'Dark',
             'other': '',
           })}";
 
-  static String m4(language) => "${Intl.select(language, {
+  static String m6(language) => "${Intl.select(language, {
             'ko': 'Korean',
             'ja': 'Japenes',
             'en': 'English',
             'other': '',
           })}";
 
-  static String m5(msgType) => "${Intl.select(msgType, {
+  static String m7(msgType) => "${Intl.select(msgType, {
             'notInvalid': 'Check All Fields.',
             'other': '',
           })}";
@@ -64,8 +75,10 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("E-BOOK Reader"),
-        "epubActionBtns": m0,
-        "errorMsg": m1,
+        "dialogActionBtns": m0,
+        "dialogTitle": m1,
+        "epubActionBtns": m2,
+        "errorMsg": m3,
         "fileOpen": MessageLookupByLibrary.simpleMessage("open EPUB"),
         "filePickerTitle":
             MessageLookupByLibrary.simpleMessage("EPUB File Select"),
@@ -78,12 +91,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "settingsSaveBtn":
             MessageLookupByLibrary.simpleMessage("Save Settings"),
         "settingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
-        "successMsg": m2,
+        "successMsg": m4,
         "themeMode": MessageLookupByLibrary.simpleMessage("Theme Mode"),
-        "themeModeOption": m3,
+        "themeModeOption": m5,
         "translateLanguage":
             MessageLookupByLibrary.simpleMessage("Translate Language"),
-        "translateLanguageOption": m4,
-        "validMsg": m5
+        "translateLanguageOption": m6,
+        "validMsg": m7
       };
 }
