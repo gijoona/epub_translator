@@ -116,7 +116,8 @@ class DatabaseHelper {
   // history　테이블의 모든 항목 가져오기
   Future<List<HistoryModel>> getAllHistory() async {
     final db = await database;
-    final List<Map<String, dynamic>> result = await db.query('history');
+    final List<Map<String, dynamic>> result =
+        await db.query('history', orderBy: 'last_view_date DESC');
     return result.map((history) => HistoryModel.fromMap(history)).toList();
   }
 

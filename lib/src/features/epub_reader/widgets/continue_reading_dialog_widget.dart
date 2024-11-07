@@ -15,7 +15,7 @@ class ContinueReadingDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-      height: 162,
+      height: 180,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
       ),
@@ -34,7 +34,7 @@ class ContinueReadingDialog extends StatelessWidget {
                   flex: 2,
                   child: FilledButton(
                     style: ButtonStyle(
-                      minimumSize: WidgetStateProperty.all(const Size(20, 70)),
+                      minimumSize: WidgetStateProperty.all(const Size(20, 60)),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
@@ -63,7 +63,7 @@ class ContinueReadingDialog extends StatelessWidget {
                   flex: 3,
                   child: ElevatedButton(
                     style: ButtonStyle(
-                      minimumSize: WidgetStateProperty.all(const Size(30, 70)),
+                      minimumSize: WidgetStateProperty.all(const Size(30, 60)),
                       shape: WidgetStateProperty.all(
                         const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(

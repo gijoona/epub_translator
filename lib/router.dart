@@ -1,3 +1,4 @@
+import 'package:epub_translator/src/features/epub_history/epub_history_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/file_picker/views/file_picker_screen.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
@@ -15,6 +16,11 @@ final routerConfig = GoRouter(
       path: EpubScreen.routeURL,
       name: EpubScreen.routeName,
       builder: (context, state) => const EpubScreen(),
+    ),
+    GoRoute(
+      path: EpubHistoryScreen.routeURL,
+      name: EpubHistoryScreen.routeName,
+      builder: (context, state) => const EpubHistoryScreen(),
     ),
     GoRoute(
       path: SettingsScreen.routeURL,

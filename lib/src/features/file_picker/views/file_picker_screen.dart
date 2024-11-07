@@ -4,6 +4,7 @@ import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/models/history_model.dart';
 import 'package:epub_translator/src/db/providers/history_provider.dart';
 import 'package:epub_translator/src/features/common/utils/utils.dart';
+import 'package:epub_translator/src/features/epub_history/epub_history_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -112,6 +113,16 @@ class FilePickerScreen extends ConsumerWidget {
             child: Text(S.of(context).fileOpen),
           ),
         ),
+        persistentFooterButtons: [
+          ElevatedButton(
+            onPressed: () {
+              context.pushNamed(EpubHistoryScreen.routeName);
+            },
+            child: const Center(
+              child: Text('열람이력 보기'),
+            ),
+          ),
+        ],
       ),
     );
   }
