@@ -53,16 +53,7 @@ class EpubHistoryScreen extends ConsumerWidget {
     final bookHistory =
         await ref.read(historyProvider.notifier).getHistory(book.title);
 
-    var historyModel = HistoryModel.empty();
-    if (bookHistory != null) {
-      historyModel = historyModel.copyWith(
-        epubName: bookHistory.epubName,
-        coverImage: bookHistory.coverImage,
-        historyJson: bookHistory.historyJson,
-      );
-    }
-
-    ref.read(historyProvider.notifier).saveHistory(historyModel);
+    ref.read(historyProvider.notifier).saveHistory(bookHistory!);
   }
 
   @override
