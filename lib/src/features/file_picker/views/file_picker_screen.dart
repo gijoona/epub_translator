@@ -39,7 +39,7 @@ class FilePickerScreen extends ConsumerWidget {
       final book = ref.read(epubBookProvider.notifier).state;
 
       if (book != null) {
-        await saveHistory(ref, book);
+        await saveHistory(ref, book, filePath);
 
         Map<String, List<String>> translatesMap = {};
         for (var value in book.contents.values.indexed) {
@@ -69,19 +69,25 @@ class FilePickerScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> saveHistory(WidgetRef ref, EpubBookModel book) async {
+  Future<void> saveHistory(
+      WidgetRef ref, EpubBookModel book, String epubFilePath) async {
     final bookHistory =
         await ref.read(historyProvider.notifier).getHistory(book.title);
 
     var historyModel = HistoryModel.empty();
     if (bookHistory != null) {
+      final historyJson = jsonDecode(bookHistory.historyJson);
+      historyJson['file_path'] = epubFilePath;
       historyModel = historyModel.copyWith(
         epubName: bookHistory.epubName,
         coverImage: bookHistory.coverImage,
-        historyJson: bookHistory.historyJson,
+        historyJson: jsonEncode(historyJson),
       );
     } else {
-      final historyJson = jsonEncode(<String, dynamic>{'last_view_index': 0});
+      final historyJson = jsonEncode(<String, dynamic>{
+        'last_view_index': 0,
+        'file_path': epubFilePath,
+      });
       historyModel = historyModel.copyWith(
         epubName: book.title,
         coverImage: Utils.getImageAsBase64(book.images.values.first),
