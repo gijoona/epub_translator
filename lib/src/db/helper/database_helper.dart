@@ -1,4 +1,4 @@
-import 'package:epub_translator/src/db/models/history_model.dart';
+import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

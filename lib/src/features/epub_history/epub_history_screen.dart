@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:epub_translator/src/db/models/history_model.dart';
-import 'package:epub_translator/src/db/providers/history_provider.dart';
+import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
+import 'package:epub_translator/src/features/epub_history/services/history_service.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
@@ -20,15 +20,18 @@ class EpubHistoryScreen extends ConsumerWidget {
   // file_picker > 열람파일 보기 > EpubHistoryScreen
   const EpubHistoryScreen({super.key});
 
-  void _onTap(BuildContext context, WidgetRef ref, String filePath) async {
+  void _onTap(BuildContext context, WidgetRef ref, HistoryModel history) async {
     // 선택된 EPUB 파일 load
-    await ref.read(epubControllerProvider.notifier).loadEpub(filePath);
     // 새로운 EPUB파일 로드 시 포함된 이미지 파일등의 정보가 변경되므로 이전 번역데이터 초기화.
+    await ref
+        .read(epubControllerProvider.notifier)
+        .loadEpub(history.epubFilePath);
+
     ref.read(translatedEpubContentsProvider.notifier).state = [''];
     final book = ref.read(epubBookProvider.notifier).state;
 
     if (book != null) {
-      await saveHistory(ref, book);
+      await saveHistory(ref, history);
 
       Map<String, List<String>> translatesMap = {};
       for (var value in book.contents.values.indexed) {
@@ -43,17 +46,16 @@ class EpubHistoryScreen extends ConsumerWidget {
         contents: book.contents.values.toList(),
         translates: translatesMap,
       );
-    }
 
-    // EPUB Reader 화면으로 이동
-    context.pushNamed(EpubScreen.routeName);
+      // EPUB Reader 화면으로 이동
+      context.pushNamed(EpubScreen.routeName);
+    }
   }
 
-  Future<void> saveHistory(WidgetRef ref, EpubBookModel book) async {
-    final bookHistory =
-        await ref.read(historyProvider.notifier).getHistory(book.title);
+  void _openEpubFileForHistory() {}
 
-    ref.read(historyProvider.notifier).saveHistory(bookHistory!);
+  Future<void> saveHistory(WidgetRef ref, HistoryModel history) async {
+    ref.read(historyServiceProvider).saveHistory(history);
   }
 
   @override
@@ -72,7 +74,7 @@ class EpubHistoryScreen extends ConsumerWidget {
           ],
         ),
         body: FutureBuilder(
-          future: ref.read(historyProvider.notifier).loadAllHistory(),
+          future: ref.read(historyServiceProvider).loadAllHistory(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final historyList = snapshot.data!;
@@ -81,8 +83,7 @@ class EpubHistoryScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final history = historyList[index];
                   return ListTile(
-                    onTap: () => _onTap(context, ref,
-                        jsonDecode(history.historyJson)['file_path']),
+                    onTap: () => _onTap(context, ref, history),
                     minLeadingWidth: 50,
                     leading: Image.memory(
                       base64Decode(history.coverImage.split(',').last),

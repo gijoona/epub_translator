@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:epub_translator/generated/l10n.dart';
-import 'package:epub_translator/src/db/models/history_model.dart';
-import 'package:epub_translator/src/db/providers/history_provider.dart';
 import 'package:epub_translator/src/features/common/utils/utils.dart';
+import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
+import 'package:epub_translator/src/features/epub_history/services/history_service.dart';
 import 'package:epub_translator/src/features/epub_history/epub_history_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/controllers/epub_controller.dart';
@@ -15,6 +15,7 @@ import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image/image.dart' as img;
 
 class FilePickerScreen extends ConsumerWidget {
   static const String routeURL = '/';
@@ -70,32 +71,23 @@ class FilePickerScreen extends ConsumerWidget {
   }
 
   Future<void> saveHistory(
-      WidgetRef ref, EpubBookModel book, String epubFilePath) async {
-    final bookHistory =
-        await ref.read(historyProvider.notifier).getHistory(book.title);
-
-    var historyModel = HistoryModel.empty();
-    if (bookHistory != null) {
-      final historyJson = jsonDecode(bookHistory.historyJson);
-      historyJson['file_path'] = epubFilePath;
-      historyModel = historyModel.copyWith(
-        epubName: bookHistory.epubName,
-        coverImage: bookHistory.coverImage,
-        historyJson: jsonEncode(historyJson),
-      );
-    } else {
-      final historyJson = jsonEncode(<String, dynamic>{
-        'last_view_index': 0,
-        'file_path': epubFilePath,
-      });
-      historyModel = historyModel.copyWith(
-        epubName: book.title,
-        coverImage: Utils.getImageAsBase64(book.images.values.first),
-        historyJson: historyJson,
-      );
-    }
-
-    ref.read(historyProvider.notifier).saveHistory(historyModel);
+    WidgetRef ref,
+    EpubBookModel book,
+    String epubFilePath,
+  ) async {
+    // coverImage가 없을 경우 AppIcon 이미지로 대체
+    final iconImage =
+        await Utils.loadAssetAsImage('assets/icon/Ebook_Icon_1024x1024.png');
+    final coverImage =
+        book.coverImage ?? base64Encode(img.encodePng(iconImage!));
+    await ref.read(historyServiceProvider).saveHistory(
+          HistoryModel(
+            epubName: book.title,
+            coverImage: 'data:image/png;base64,$coverImage',
+            lastViewIndex: 0,
+            epubFilePath: epubFilePath,
+          ),
+        );
   }
 
   @override

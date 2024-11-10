@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class EpubBookModel {
   final String title;
   final String author;
-  final Image? coverImage;
+  final String? coverImage;
   final List<EpubChapter> chapters;
   final Map<String, EpubTextContentFile> contents;
   final Map<String, EpubByteContentFile> images;
@@ -18,11 +18,12 @@ class EpubBookModel {
     required this.images,
   });
 
-  factory EpubBookModel.fromEpubBook(EpubBook epubBook) {
+  factory EpubBookModel.fromEpubBook(
+      EpubBook epubBook, String? coverImageBase64) {
     return EpubBookModel(
       title: epubBook.Title ?? '제목없음',
       author: epubBook.Author ?? '작자미상',
-      coverImage: epubBook.CoverImage,
+      coverImage: coverImageBase64,
       chapters: epubBook.Chapters!.map((chapter) => chapter).toList(),
       contents: epubBook.Content!.Html!,
       images: epubBook.Content!.Images!,

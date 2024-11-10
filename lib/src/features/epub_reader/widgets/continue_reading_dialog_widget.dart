@@ -5,11 +5,11 @@ class ContinueReadingDialog extends StatelessWidget {
   const ContinueReadingDialog({
     super.key,
     required PageController pageController,
-    required this.jsonData,
+    required this.lastViewIndex,
   }) : _pageController = pageController;
 
   final PageController _pageController;
-  final dynamic jsonData;
+  final int lastViewIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class ContinueReadingDialog extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      _pageController.jumpToPage(jsonData['last_view_index']);
+                      _pageController.jumpToPage(lastViewIndex);
                       Navigator.pop(context);
                     },
                     child: Center(

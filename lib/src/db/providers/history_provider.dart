@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:epub_translator/src/db/helper/database_helper.dart';
-import 'package:epub_translator/src/db/models/history_model.dart';
+import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // DatabaseHelper 인스턴스를 관리하는 프로바이더
@@ -40,8 +40,8 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
   // history 정보 삽입 또는 업데이트
   Future<void> saveHistory(HistoryModel history) async {
     try {
-      await dbHelper.insertOrUpdateHistory(history);
-      await getHistory(history.epubName); // 업데이트 후 전체 history 정보 다시 불러오기
+      final insert = await dbHelper.insertOrUpdateHistory(history);
+      state = AsyncValue.data(history); // 트랜젝션이 진행 중이므로 조회를 수행하지 않고 저장 데이터 반환
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }

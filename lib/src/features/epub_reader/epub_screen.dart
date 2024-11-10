@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/db/providers/config_provider.dart';
 import 'package:epub_translator/src/db/providers/history_provider.dart';
@@ -76,15 +74,14 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   }
 
   void _showContinueReadingPrompt() {
-    final historyJson = ref.read(historyProvider).value!.historyJson;
-    final jsonData = jsonDecode(historyJson);
-    if (jsonData['last_view_index'] != 0) {
+    final lastViewIndex = ref.read(historyProvider).value!.lastViewIndex;
+    if (lastViewIndex != 0) {
       showModalBottomSheet(
         clipBehavior: Clip.hardEdge,
         context: context,
         builder: (context) {
           return ContinueReadingDialog(
-              pageController: _pageController, jsonData: jsonData);
+              pageController: _pageController, lastViewIndex: lastViewIndex);
         },
       );
     }
@@ -147,8 +144,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   void _updateHistory(int pageNum) {
     // 현재 열람 중인 Contents의 index(pageNum)을 history에 갱신한다.
     final history = ref.read(historyProvider).value!.copyWith(
-          historyJson:
-              jsonEncode(<String, dynamic>{'last_view_index': pageNum}),
+          lastViewIndex: pageNum,
         );
     ref.read(historyProvider.notifier).saveHistory(history);
   }
