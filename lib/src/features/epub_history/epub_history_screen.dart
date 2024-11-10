@@ -58,10 +58,12 @@ class EpubHistoryScreen extends ConsumerWidget {
     }
   }
 
-  void _openEpubFileForHistory() {}
-
   Future<void> saveHistory(WidgetRef ref, HistoryModel history) async {
-    ref.read(historyServiceProvider).saveHistory(history);
+    ref.read(historyServiceProvider).saveHistory(
+          history.copyWith(
+            lastViewDate: DateTime.now(),
+          ),
+        );
   }
 
   @override
