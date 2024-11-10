@@ -13,13 +13,17 @@ class EpubService {
   EpubService(this.ref);
 
   Future<void> loadEpub(String filePath) async {
-    final bytes = File(filePath).readAsBytesSync();
-    _epubBook = await EpubReader.readBook(bytes);
+    try {
+      final bytes = File(filePath).readAsBytesSync();
+      _epubBook = await EpubReader.readBook(bytes);
 
-    // CoverImage 데이터를 자꾸 Null로 가져와서 추가로 처리로직 추가
-    final coverImageBase64 = await Utils.extractCoverImageAsBase64(filePath);
-    ref.read(epubBookProvider.notifier).state =
-        EpubBookModel.fromEpubBook(_epubBook, coverImageBase64);
+      // CoverImage 데이터를 자꾸 Null로 가져와서 추가로 처리로직 추가
+      final coverImageBase64 = await Utils.extractCoverImageAsBase64(filePath);
+      ref.read(epubBookProvider.notifier).state =
+          EpubBookModel.fromEpubBook(_epubBook, coverImageBase64);
+    } catch (e) {
+      ref.read(epubBookProvider.notifier).state = null;
+    }
   }
 
   String getImage(String src) {

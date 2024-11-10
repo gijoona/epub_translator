@@ -40,7 +40,7 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
   // history 정보 삽입 또는 업데이트
   Future<void> saveHistory(HistoryModel history) async {
     try {
-      final insert = await dbHelper.insertOrUpdateHistory(history);
+      await dbHelper.insertOrUpdateHistory(history);
       state = AsyncValue.data(history); // 트랜젝션이 진행 중이므로 조회를 수행하지 않고 저장 데이터 반환
     } catch (e, st) {
       state = AsyncValue.error(e, st);

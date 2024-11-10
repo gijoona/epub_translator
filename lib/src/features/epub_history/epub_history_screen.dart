@@ -49,6 +49,12 @@ class EpubHistoryScreen extends ConsumerWidget {
 
       // EPUB Reader 화면으로 이동
       context.pushNamed(EpubScreen.routeName);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로컬 디바이스 내에 해당 파일정보가 없습니다.'),
+        ),
+      );
     }
   }
 
