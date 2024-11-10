@@ -21,7 +21,8 @@ class EpubService {
       final coverImageBase64 = await Utils.extractCoverImageAsBase64(filePath);
       ref.read(epubBookProvider.notifier).state =
           EpubBookModel.fromEpubBook(_epubBook, coverImageBase64);
-    } catch (e) {
+    } catch (e, st) {
+      print('EpubService.loadEpub $e, $st');
       ref.read(epubBookProvider.notifier).state = null;
     }
   }

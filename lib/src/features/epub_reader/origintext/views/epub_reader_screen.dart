@@ -50,20 +50,25 @@ class EpubReaderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var epub = ref.read(epubContentProvider.notifier).state;
-    var contentList = splitContentSection(epub!);
-
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        shrinkWrap: true, // <==== limit height. 리스트뷰 크기 고정
-        primary: false, // <====  disable scrolling. 리스트뷰 내부는 스크롤 안할거임
-        itemCount: contentList.length,
-        itemBuilder: (context, index) {
-          return EpubContentsRenderWidget(
-            contents: contentList[index],
-          );
-        },
-      ),
-    );
+    if (epub != null) {
+      var contentList = splitContentSection(epub);
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+          shrinkWrap: true, // <==== limit height. 리스트뷰 크기 고정
+          primary: false, // <====  disable scrolling. 리스트뷰 내부는 스크롤 안할거임
+          itemCount: contentList.length,
+          itemBuilder: (context, index) {
+            return EpubContentsRenderWidget(
+              contents: contentList[index],
+            );
+          },
+        ),
+      );
+    } else {
+      return const Center(
+        child: Text('EPUB 파일로드 중 오류가 발생했습니다.'),
+      );
+    }
   }
 }

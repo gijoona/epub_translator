@@ -7,11 +7,13 @@ import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_wi
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/epub_reader/translation/controllers/translation_controller.dart';
+import 'package:epub_translator/src/features/file_picker/views/file_picker_screen.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 /// 화면모드
 /// 0 : 원본/번역 둘다 표시
@@ -36,6 +38,7 @@ class EpubScreen extends ConsumerStatefulWidget {
 
 class _EpubScreenState extends ConsumerState<EpubScreen> {
   final PageController _pageController = PageController();
+  // 페이지별로 ScrollController를 관리하는 Map
   final Map<int, ScrollController> _scrollControllers = {};
   late ScrollController _contentScrollController;
 
@@ -46,8 +49,6 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
   late EpubBookModel? _book;
   EpubChapter? _chapter;
   double _childMaxScrollExtent = 0.0;
-
-  // 페이지별로 ScrollController를 관리하는 Map
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         .addPostFrameCallback((_) => _showContinueReadingPrompt());
   }
 
+  // TODO 패배히로인 3권을 불려올 때 오류 케이스 발견. 업로드된 파일이 잘못된 것이 아닐까 추측되며 예외처리 필요!!!
   Future<void> loadEpubBook() async {
     _book = ref.read(epubBookProvider.notifier).state;
     if (_book != null) {

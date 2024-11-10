@@ -13,14 +13,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class EpubHistoryScreen extends ConsumerWidget {
+class EpubHistoryScreen extends ConsumerStatefulWidget {
   static const routeURL = '/history';
   static const routeName = 'history';
 
   // file_picker > 열람파일 보기 > EpubHistoryScreen
   const EpubHistoryScreen({super.key});
 
-  void _onTap(BuildContext context, WidgetRef ref, HistoryModel history) async {
+  @override
+  ConsumerState<EpubHistoryScreen> createState() => _EpubHistoryScreenState();
+}
+
+class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
+  void _onTap(HistoryModel history) async {
     // 선택된 EPUB 파일 load
     // 새로운 EPUB파일 로드 시 포함된 이미지 파일등의 정보가 변경되므로 이전 번역데이터 초기화.
     await ref
@@ -31,7 +36,7 @@ class EpubHistoryScreen extends ConsumerWidget {
     final book = ref.read(epubBookProvider.notifier).state;
 
     if (book != null) {
-      await saveHistory(ref, history);
+      await saveHistory(history);
 
       Map<String, List<String>> translatesMap = {};
       for (var value in book.contents.values.indexed) {
@@ -58,7 +63,7 @@ class EpubHistoryScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> saveHistory(WidgetRef ref, HistoryModel history) async {
+  Future<void> saveHistory(HistoryModel history) async {
     ref.read(historyServiceProvider).saveHistory(
           history.copyWith(
             lastViewDate: DateTime.now(),
@@ -66,8 +71,17 @@ class EpubHistoryScreen extends ConsumerWidget {
         );
   }
 
+  void deleteHistory(String epubName) {
+    ref.read(historyServiceProvider).deleteHistory(epubName);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$epubName 삭제됨')),
+    );
+    setState(() {});
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -90,30 +104,47 @@ class EpubHistoryScreen extends ConsumerWidget {
                 clipBehavior: Clip.none,
                 itemBuilder: (context, index) {
                   final history = historyList[index];
-                  return ListTile(
-                    onTap: () => _onTap(context, ref, history),
-                    minLeadingWidth: 50,
-                    leading: Image.memory(
-                      base64Decode(history.coverImage.split(',').last),
-                      fit: BoxFit.contain,
-                      width: 50,
+                  return Dismissible(
+                    key: ValueKey(history),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Theme.of(context).colorScheme.errorContainer,
                     ),
-                    title: Container(
-                      height: 50,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        history.epubName,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    onDismissed: (direction) {
+                      switch (direction.name) {
+                        case 'endToStart':
+                          deleteHistory(history.epubName);
+                          setState(() {
+                            historyList.removeAt(index); // 항목 삭제
+                          });
+                          break;
+                      }
+                    },
+                    child: ListTile(
+                      onTap: () => _onTap(history),
+                      minLeadingWidth: 50,
+                      leading: Image.memory(
+                        base64Decode(history.coverImage.split(',').last),
+                        fit: BoxFit.contain,
+                        width: 50,
                       ),
+                      title: Container(
+                        height: 50,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          history.epubName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      subtitle: Text(
+                        '열람일시 : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
+                      ),
+                      subtitleTextStyle: Theme.of(context)
+                          .textTheme
+                          .bodySmall!
+                          .copyWith(color: Colors.grey),
                     ),
-                    subtitle: Text(
-                      '열람일시 : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
-                    ),
-                    subtitleTextStyle: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Colors.grey),
                   );
                 },
                 separatorBuilder: (context, index) {
