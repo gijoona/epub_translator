@@ -21,6 +21,17 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
     }
   }
 
+  Future<List<HistoryModel>?> loadAllHistoryPaging({
+    required int pageNum,
+    int pageSize = 10,
+  }) async {
+    try {
+      return await dbHelper.getAllHistory();
+    } catch (e) {
+      return null;
+    }
+  }
+
   // 특정 EPUB의 history 정보를 불러오는 메서드
   Future<HistoryModel?> getHistory(String epubName) async {
     try {

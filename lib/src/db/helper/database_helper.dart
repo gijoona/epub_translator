@@ -121,6 +121,19 @@ class DatabaseHelper {
     return result.map((history) => HistoryModel.fromMap(history)).toList();
   }
 
+  // history 테이블 페이징 처리
+  Future<List<HistoryModel>> getAllHistoryPaging(
+      int pageNum, int pageSize) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'history',
+      offset: ((pageNum - 1) * pageSize), // pageNum은 1부터 시작
+      limit: pageSize,
+      orderBy: 'last_view_date DESC',
+    );
+    return result.map((history) => HistoryModel.fromMap(history)).toList();
+  }
+
   // 특정 EPUB파일의 history　항목을 가져오기.
   Future<HistoryModel?> getHistoryByEpubName(String epubName) async {
     final db = await database;

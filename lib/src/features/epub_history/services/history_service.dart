@@ -1,12 +1,14 @@
 // HistoryService 클래스 정의
+import 'package:epub_translator/src/features/epub_history/epub_history_screen.dart';
 import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
 import 'package:epub_translator/src/db/providers/history_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HistoryService {
+  final Ref ref;
   final HistoryNotifier historyNotifier;
 
-  HistoryService(this.historyNotifier);
+  HistoryService(this.ref, this.historyNotifier);
 
   // history 정보 삽입 또는 업데이트
   Future<void> saveHistory(HistoryModel history) async {
@@ -25,6 +27,13 @@ class HistoryService {
     return await historyNotifier.loadAllHistory();
   }
 
+  Future<List<HistoryModel>?> loadAllHistoryPaging() async {
+    final pageNum = ref.watch(historyPageProvider.notifier).state;
+    return await historyNotifier.loadAllHistoryPaging(
+      pageNum: pageNum,
+    );
+  }
+
   // 특정 EPUB의 history 정보를 불러오는 메서드
   Future<HistoryModel?> getHistory(String epubName) async {
     return await historyNotifier.getHistory(epubName);
@@ -39,5 +48,5 @@ class HistoryService {
 // HistoryService를 관리하는 프로바이더
 final historyServiceProvider = Provider<HistoryService>((ref) {
   final historyNotifier = ref.watch(historyProvider.notifier);
-  return HistoryService(historyNotifier);
+  return HistoryService(ref, historyNotifier);
 });

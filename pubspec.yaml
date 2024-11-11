@@ -54,6 +54,7 @@ dependencies:
   intl: any
   archive: ^3.6.1
   xml: ^6.5.0
+  visibility_detector: ^0.4.0+2
 
 dependency_overrides:
   fading_edge_scrollview: ^4.1.1
