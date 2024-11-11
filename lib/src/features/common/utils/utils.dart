@@ -131,7 +131,7 @@ class Utils {
     }
 
     // 이미지 크기 조정
-    Image resizedImage = copyResize(image, width: 50);
+    Image resizedImage = copyResize(image, width: 100);
 
     // PNG 포맷으로 인코딩
     return encodePng(resizedImage);

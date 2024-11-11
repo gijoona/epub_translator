@@ -14,8 +14,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-final historyPageProvider = StateProvider((ref) => 1);
-
 class EpubHistoryScreen extends ConsumerStatefulWidget {
   static const routeURL = '/history';
   static const routeName = 'history';
@@ -29,6 +27,29 @@ class EpubHistoryScreen extends ConsumerStatefulWidget {
 
 class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
   List<HistoryModel> historyList = [];
+  int pageNum = 1;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadHistory();
+  }
+
+  Future<void> loadHistory() async {
+    if (!mounted || isLoading) return;
+    await ref
+        .read(historyServiceProvider)
+        .loadAllHistoryPaging(pageNum: pageNum)
+        .then((data) {
+      if (data!.isEmpty) return;
+      setState(() {
+        historyList.addAll(data);
+        pageNum += 1;
+        isLoading = false;
+      });
+    });
+  }
 
   void _onTap(HistoryModel history) async {
     // 선택된 EPUB 파일 load
@@ -86,6 +107,11 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -100,75 +126,65 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
             ),
           ],
         ),
-        body: FutureBuilder(
-          future: ref.read(historyServiceProvider).loadAllHistoryPaging(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              historyList.addAll(snapshot.data!);
-              return ListView.separated(
-                clipBehavior: Clip.none,
-                itemBuilder: (context, index) {
-                  final history = historyList[index];
-                  return VisibilityDetector(
-                    key: ValueKey(index),
-                    onVisibilityChanged: (info) {
-                      print(info);
-                    },
-                    child: Dismissible(
-                      key: ValueKey(history),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                      ),
-                      onDismissed: (direction) {
-                        switch (direction.name) {
-                          case 'endToStart':
-                            deleteHistory(history.epubName);
-                            setState(() {
-                              historyList.removeAt(index); // 항목 삭제
-                            });
-                            break;
-                        }
-                      },
-                      child: ListTile(
-                        onTap: () => _onTap(history),
-                        minLeadingWidth: 50,
-                        leading: Image.memory(
-                          base64Decode(history.coverImage.split(',').last),
-                          fit: BoxFit.contain,
-                          width: 50,
-                        ),
-                        title: Container(
-                          height: 50,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            history.epubName,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        subtitle: Text(
-                          '열람일시 : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
-                        ),
-                        subtitleTextStyle: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.grey),
-                      ),
+        body: ListView.separated(
+          shrinkWrap: true,
+          itemCount: historyList.length,
+          itemBuilder: (context, index) {
+            final history = historyList[index];
+            return VisibilityDetector(
+              key: ValueKey(history.epubName),
+              onVisibilityChanged: (info) {
+                if (!isLoading && index >= historyList.length - 1) {
+                  loadHistory();
+                }
+              },
+              child: Dismissible(
+                key: ValueKey(history.epubName),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  color: Theme.of(context).colorScheme.errorContainer,
+                ),
+                onDismissed: (direction) {
+                  switch (direction.name) {
+                    case 'endToStart':
+                      deleteHistory(history.epubName);
+                      setState(() => historyList.removeAt(index));
+                      break;
+                  }
+                },
+                child: ListTile(
+                  onTap: () => _onTap(history),
+                  minLeadingWidth: 50,
+                  leading: Image.memory(
+                    base64Decode(history.coverImage.split(',').last),
+                    fit: BoxFit.contain,
+                    width: 50,
+                  ),
+                  title: Container(
+                    height: 50,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      history.epubName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const Divider(
-                    indent: 20,
-                    endIndent: 20,
-                  );
-                },
-                itemCount: historyList.length,
-              );
-            }
-
-            return const Center(child: Text('열람이력이 없습니다.'));
+                  ),
+                  subtitle: Text(
+                    '열람일시 : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
+                  ),
+                  subtitleTextStyle: Theme.of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(color: Colors.grey),
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (context, index) {
+            return const Divider(
+              indent: 20,
+              endIndent: 20,
+            );
           },
         ),
       ),
