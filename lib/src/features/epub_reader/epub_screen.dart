@@ -7,13 +7,11 @@ import 'package:epub_translator/src/features/epub_reader/widgets/epub_pagenum_wi
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/epub_reader/translation/controllers/translation_controller.dart';
-import 'package:epub_translator/src/features/file_picker/views/file_picker_screen.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 
 /// 화면모드
 /// 0 : 원본/번역 둘다 표시
