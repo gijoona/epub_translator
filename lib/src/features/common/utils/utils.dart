@@ -115,12 +115,25 @@ class Utils {
         orElse: () => throw Exception('표지 이미지 파일을 찾을 수 없습니다.'),
       );
 
-      // 표지 이미지 데이터를 Base64로 인코딩
-      return 'data:image/png;base64,${base64Encode(coverFile.content)}';
+      // 표지 이미지 데이터를 scaleDown 후 Base64로 인코딩
+      return base64Encode(scaleDownImage(coverFile));
     } catch (e, st) {
       print('표지 이미지를 가져오는 중 오류 발생: $e');
       print(st);
       return null;
     }
+  }
+
+  static List<int> scaleDownImage(ArchiveFile imageFile) {
+    Image? image = decodeImage(imageFile.content);
+    if (image == null) {
+      throw Exception('이미지를 디코딩할 수 없습니다.');
+    }
+
+    // 이미지 크기 조정
+    Image resizedImage = copyResize(image, width: 50);
+
+    // PNG 포맷으로 인코딩
+    return encodePng(resizedImage);
   }
 }

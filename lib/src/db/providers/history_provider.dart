@@ -26,7 +26,7 @@ class HistoryNotifier extends StateNotifier<AsyncValue<HistoryModel?>> {
     int pageSize = 10,
   }) async {
     try {
-      return await dbHelper.getAllHistory();
+      return await dbHelper.getAllHistoryPaging(pageNum, pageSize);
     } catch (e) {
       return null;
     }
