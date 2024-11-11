@@ -55,10 +55,18 @@ class FilePickerScreen extends ConsumerWidget {
           contents: book.contents.values.toList(),
           translates: translatesMap,
         );
-      }
 
-      // EPUB Reader 화면으로 이동
-      context.pushNamed(EpubScreen.routeName);
+        // EPUB Reader 화면으로 이동
+        context.pushNamed(EpubScreen.routeName);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'EPUB 파일을 여는 중 오류가 발생했습니다.',
+            ),
+          ),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -111,6 +119,7 @@ class FilePickerScreen extends ConsumerWidget {
             child: Text(S.of(context).fileOpen),
           ),
         ),
+        extendBody: true,
         persistentFooterButtons: [
           ElevatedButton(
             onPressed: () {

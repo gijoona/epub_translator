@@ -59,7 +59,7 @@ class _EpubScreenState extends ConsumerState<EpubScreen> {
         .addPostFrameCallback((_) => _showContinueReadingPrompt());
   }
 
-  // TODO 패배히로인 3권을 불려올 때 오류 케이스 발견. 업로드된 파일이 잘못된 것이 아닐까 추측되며 예외처리 필요!!!
+  // 파일로드 실패 시 FilePickerScreen에서 Snackbar로 메시지 표시처리함.
   Future<void> loadEpubBook() async {
     _book = ref.read(epubBookProvider.notifier).state;
     if (_book != null) {
