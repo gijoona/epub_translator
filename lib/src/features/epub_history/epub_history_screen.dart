@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
 import 'package:epub_translator/src/features/epub_history/services/history_service.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
@@ -82,8 +83,8 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
       context.pushNamed(EpubScreen.routeName);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('로컬 디바이스 내에 해당 파일정보가 없습니다.'),
+        SnackBar(
+          content: Text(S.of(context).errorMsg('localEpubNotExists')),
         ),
       );
     }
@@ -101,7 +102,7 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
     ref.read(historyServiceProvider).deleteHistory(epubName);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$epubName 삭제됨')),
+      SnackBar(content: Text('$epubName ${S.of(context).deleted}')),
     );
     setState(() {});
   }
@@ -116,7 +117,7 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('열람이력'),
+          title: Text(S.of(context).historyTitle),
           actions: [
             IconButton(
               onPressed: () {
@@ -170,7 +171,7 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
                     ),
                   ),
                   subtitle: Text(
-                    '열람일시 : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
+                    '${S.of(context).historyDate} : ${DateFormat('yyyy-MM-dd').format(history.lastViewDate)}',
                   ),
                   subtitleTextStyle: Theme.of(context)
                       .textTheme

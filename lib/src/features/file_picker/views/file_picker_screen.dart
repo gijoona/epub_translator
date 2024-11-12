@@ -60,9 +60,9 @@ class FilePickerScreen extends ConsumerWidget {
         context.pushNamed(EpubScreen.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text(
-              'EPUB 파일을 여는 중 오류가 발생했습니다.',
+              S.of(context).errorMsg('epubLoadFailed'),
             ),
           ),
         );
@@ -125,8 +125,8 @@ class FilePickerScreen extends ConsumerWidget {
             onPressed: () {
               context.pushNamed(EpubHistoryScreen.routeName);
             },
-            child: const Center(
-              child: Text('열람이력 보기'),
+            child: Center(
+              child: Text(S.of(context).viewReadingHistory),
             ),
           ),
         ],

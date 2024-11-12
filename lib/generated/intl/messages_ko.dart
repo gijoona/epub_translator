@@ -44,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
             'noneSelectedFile': '선택된 파일이 없습니다.',
             'emptyAPIInfo': '번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.',
             'imageLoadFail': '이미지 로드 실패',
+            'localEpubNotExists': '로컬 디바이스 내에 해당 파일정보가 없습니다.',
+            'epubLoadFailed': 'EPUB 파일을 여는 중 오류가 발생했습니다.',
             'other': '',
           })}";
 
@@ -74,12 +76,15 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("E-BOOK 리더"),
+        "deleted": MessageLookupByLibrary.simpleMessage("삭제됨"),
         "dialogActionBtns": m0,
         "dialogTitle": m1,
         "epubActionBtns": m2,
         "errorMsg": m3,
         "fileOpen": MessageLookupByLibrary.simpleMessage("EPUB 열기"),
         "filePickerTitle": MessageLookupByLibrary.simpleMessage("EPUB File 선택"),
+        "historyDate": MessageLookupByLibrary.simpleMessage("열람일시"),
+        "historyTitle": MessageLookupByLibrary.simpleMessage("열람이력"),
         "openaiAPI": MessageLookupByLibrary.simpleMessage("OPENAI API"),
         "openaiAPIKey": MessageLookupByLibrary.simpleMessage("OPENAI API 키"),
         "openaiAPIModel": MessageLookupByLibrary.simpleMessage("OPENAI API 모델"),
@@ -91,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "themeModeOption": m5,
         "translateLanguage": MessageLookupByLibrary.simpleMessage("번역 언어"),
         "translateLanguageOption": m6,
-        "validMsg": m7
+        "validMsg": m7,
+        "viewReadingHistory": MessageLookupByLibrary.simpleMessage("열람이력 보기")
       };
 }

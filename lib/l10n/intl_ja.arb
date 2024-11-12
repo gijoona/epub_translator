@@ -6,6 +6,8 @@
     "@filePickerTitle": {},
     "fileOpen": "EPUBを開く",
     "@fileOpen": {},
+    "viewReadingHistory": "閲覧履歴を見る",
+    "@viewReadingHistory": {},
     "settingsTitle": "設定管理",
     "@settingsTitle": {},
     "settingsSaveBtn": "設定を保存",
@@ -49,6 +51,10 @@
             }
         }
     },
+    "historyTitle": "閲覧履歴",
+    "@historyTitle": {},
+    "historyDate": "閲覧日時",
+    "@historyDate": {},
     "successMsg": "{msgType, select, saveSattings{設定が保存されました。} other{}}",
     "@successMsg": {
         "description": "完了メッセージの定義",
@@ -58,7 +64,7 @@
             }
         }
     },
-    "errorMsg": "{msgType, select, noneSelectedFile{選択されたファイルがありません。} emptyAPIInfo{翻訳機能を利用するには、設定でOPENAI情報を入力する必要があります。} imageLoadFail{画像の読み込みに失敗しました} other{}}",
+    "errorMsg": "{msgType, select, noneSelectedFile{選択されたファイルがありません。} emptyAPIInfo{翻訳機能を利用するには、設定でOPENAI情報を入力する必要があります。} imageLoadFail{画像の読み込みに失敗しました} localEpubNotExists{ローカルデバイスに該当するファイル情報が存在しません。} epubLoadFailed{EPUBファイルを開く際にエラーが発生しました。} other{}}",
     "@errorMsg": {
         "description": "エラーメッセージの定義",
         "placeholders": {
@@ -93,5 +99,7 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "deleted": "削除済み",
+    "@deleted": {}
 }

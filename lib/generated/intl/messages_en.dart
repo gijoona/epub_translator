@@ -45,6 +45,9 @@ class MessageLookup extends MessageLookupByLibrary {
             'emptyAPIInfo':
                 'To use the translation function, you must enter OPENAI information in settings.',
             'imageLoadFail': 'Image load failed',
+            'localEpubNotExists':
+                'The file information does not exist on the local device.',
+            'epubLoadFailed': 'An error occurred while opening the EPUB file.',
             'other': '',
           })}";
 
@@ -75,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "appName": MessageLookupByLibrary.simpleMessage("E-BOOK Reader"),
+        "deleted": MessageLookupByLibrary.simpleMessage("Deleted"),
         "dialogActionBtns": m0,
         "dialogTitle": m1,
         "epubActionBtns": m2,
@@ -82,6 +86,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "fileOpen": MessageLookupByLibrary.simpleMessage("open EPUB"),
         "filePickerTitle":
             MessageLookupByLibrary.simpleMessage("EPUB File Select"),
+        "historyDate": MessageLookupByLibrary.simpleMessage("Reading Date"),
+        "historyTitle": MessageLookupByLibrary.simpleMessage("Reading History"),
         "openaiAPI": MessageLookupByLibrary.simpleMessage("OPENAI API"),
         "openaiAPIKey": MessageLookupByLibrary.simpleMessage("OPENAI API Key"),
         "openaiAPIModel":
@@ -97,6 +103,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "translateLanguage":
             MessageLookupByLibrary.simpleMessage("Translate Language"),
         "translateLanguageOption": m6,
-        "validMsg": m7
+        "validMsg": m7,
+        "viewReadingHistory":
+            MessageLookupByLibrary.simpleMessage("View Reading History")
       };
 }

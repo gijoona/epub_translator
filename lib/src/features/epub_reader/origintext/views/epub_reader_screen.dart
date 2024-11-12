@@ -1,3 +1,4 @@
+import 'package:epub_translator/generated/l10n.dart';
 import 'package:epub_translator/src/features/epub_reader/widgets/epub_contents_render_widget.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:flutter/material.dart';
@@ -66,8 +67,8 @@ class EpubReaderScreen extends ConsumerWidget {
         ),
       );
     } else {
-      return const Center(
-        child: Text('EPUB 파일로드 중 오류가 발생했습니다.'),
+      return Center(
+        child: Text(S.of(context).errorMsg('epubLoadFailed')),
       );
     }
   }

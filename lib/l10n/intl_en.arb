@@ -6,6 +6,8 @@
     "@filePickerTitle": {},
     "fileOpen": "open EPUB",
     "@fileOpen": {},
+    "viewReadingHistory": "View Reading History",
+    "@viewReadingHistory": {},
     "settingsTitle": "Settings",
     "@settingsTitle": {},
     "settingsSaveBtn": "Save Settings",
@@ -49,6 +51,10 @@
             }
         }
     },
+    "historyTitle": "Reading History",
+    "@historyTitle": {},
+    "historyDate": "Reading Date",
+    "@historyDate": {},
     "successMsg": "{msgType, select, saveSattings{Settings save complated} other{}}",
     "@successMsg": {
         "description": "Success Message Define",
@@ -58,7 +64,7 @@
             }
         }
     },
-    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} emptyAPIInfo{To use the translation function, you must enter OPENAI information in settings.} imageLoadFail{Image load failed} other{}}",
+    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} emptyAPIInfo{To use the translation function, you must enter OPENAI information in settings.} imageLoadFail{Image load failed} localEpubNotExists{The file information does not exist on the local device.} epubLoadFailed{An error occurred while opening the EPUB file.} other{}}",
     "@errorMsg": {
         "description": "Error Message Define",
         "placeholders": {
@@ -93,5 +99,7 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "deleted": "Deleted",
+    "@deleted": {}
 }
