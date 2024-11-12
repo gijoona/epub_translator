@@ -2,12 +2,15 @@ import 'dart:convert';
 
 import 'dart:io';
 import 'package:archive/archive_io.dart';
+import 'package:logger/logger.dart';
 import 'package:xml/xml.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
 class Utils {
+  static final Logger logger = Logger();
+
   static String getImageAsBase64(EpubByteContentFile image) {
     final bytes = image.Content ?? [];
     return 'data:image/png;base64,${base64Encode(bytes)}';
@@ -23,7 +26,7 @@ class Utils {
       final Image? image = decodeImage(bytes);
       return image;
     } catch (e) {
-      print('Error loading asset: $e');
+      logger.e('Error loading asset: $e');
       return null;
     }
   }
@@ -34,7 +37,7 @@ class Utils {
       // EPUB 파일 열기
       final epubFile = File(epubFilePath);
       if (!epubFile.existsSync()) {
-        print('EPUB 파일이 존재하지 않습니다.');
+        logger.e('EPUB 파일이 존재하지 않습니다.');
         return null;
       }
 
@@ -79,7 +82,7 @@ class Utils {
             )
             .getAttribute('content');
       } catch (e) {
-        print(e);
+        logger.e(e);
         metaCoverId = 'cover';
       }
 
@@ -92,7 +95,7 @@ class Utils {
 
         coverHref = coverItem.getAttribute('href');
       } catch (e) {
-        print(e);
+        logger.e(e);
 
         // <item href="Images/embed0024_HD.jpg" properties="cover-image" id="embed0024_HD" media-type="image/jpeg"/>
         final imageItems = opfXml.findAllElements('item').where((element) =>
@@ -118,8 +121,8 @@ class Utils {
       // 표지 이미지 데이터를 scaleDown 후 Base64로 인코딩
       return base64Encode(scaleDownImage(coverFile));
     } catch (e, st) {
-      print('표지 이미지를 가져오는 중 오류 발생: $e');
-      print(st);
+      logger.e('표지 이미지를 가져오는 중 오류 발생: $e');
+      logger.d(st);
       return null;
     }
   }

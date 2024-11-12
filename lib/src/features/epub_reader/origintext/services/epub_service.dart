@@ -4,9 +4,11 @@ import 'package:epub_translator/src/features/common/utils/utils.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 class EpubService {
   late EpubBook _epubBook;
+  Logger logger = Logger();
 
   final Ref ref;
 
@@ -22,7 +24,7 @@ class EpubService {
       ref.read(epubBookProvider.notifier).state =
           EpubBookModel.fromEpubBook(_epubBook, coverImageBase64);
     } catch (e, st) {
-      print('EpubService.loadEpub $e, $st');
+      logger.e('EpubService.loadEpub $e, $st');
       ref.read(epubBookProvider.notifier).state = null;
     }
   }
