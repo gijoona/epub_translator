@@ -75,8 +75,9 @@ dev_dependencies:
 
 flutter_icons:
   android: true
+  image_path_android: "assets/icon/Ebook_Icon_1024x1024.png" # 아이콘 파일의 경로
   ios: true
-  image_path: "assets/icon/Ebook_Icon_1024x1024.png" # 아이콘 파일의 경로
+  image_path_ios: "assets/icon/Ebook_Icon_1024x1024_ios.png" # 아이콘 파일의 경로
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
