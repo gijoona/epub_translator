@@ -8,6 +8,7 @@ import 'package:epub_translator/src/features/epub_reader/origintext/controllers/
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_book_model.dart';
 import 'package:epub_translator/src/features/epub_reader/origintext/models/epub_content_model.dart';
 import 'package:epub_translator/src/features/epub_reader/translation/controllers/translation_controller.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:epub_translator/src/features/settings/views/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -143,7 +144,10 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
                 key: ValueKey(history.epubName),
                 direction: DismissDirection.endToStart,
                 background: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.centerRight,
                   color: Theme.of(context).colorScheme.errorContainer,
+                  child: const FaIcon(FontAwesomeIcons.trash),
                 ),
                 onDismissed: (direction) {
                   switch (direction.name) {
