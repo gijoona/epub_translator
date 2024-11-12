@@ -2,15 +2,13 @@ import 'dart:convert';
 
 import 'dart:io';
 import 'package:archive/archive_io.dart';
-import 'package:logger/logger.dart';
+import 'package:epub_translator/src/features/common/utils/logger.dart';
 import 'package:xml/xml.dart';
 import 'package:epubx/epubx.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
 class Utils {
-  static final Logger logger = Logger();
-
   static String getImageAsBase64(EpubByteContentFile image) {
     final bytes = image.Content ?? [];
     return 'data:image/png;base64,${base64Encode(bytes)}';
