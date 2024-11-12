@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
             'imageLoadFail': '이미지 로드 실패',
             'localEpubNotExists': '로컬 디바이스 내에 해당 파일정보가 없습니다.',
             'epubLoadFailed': 'EPUB 파일을 여는 중 오류가 발생했습니다.',
+            'historyLoadFailed': '열람이력 조회 중 오류가 발생했습니다.',
             'other': '',
           })}";
 

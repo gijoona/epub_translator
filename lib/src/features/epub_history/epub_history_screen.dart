@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:epub_translator/generated/l10n.dart';
+import 'package:epub_translator/src/features/common/utils/logger.dart';
 import 'package:epub_translator/src/features/epub_history/models/history_model.dart';
 import 'package:epub_translator/src/features/epub_history/services/history_service.dart';
 import 'package:epub_translator/src/features/epub_reader/epub_screen.dart';
@@ -40,17 +41,27 @@ class _EpubHistoryScreenState extends ConsumerState<EpubHistoryScreen> {
 
   Future<void> loadHistory() async {
     if (!mounted || isLoading) return;
-    await ref
-        .read(historyServiceProvider)
-        .loadAllHistoryPaging(pageNum: pageNum)
-        .then((data) {
-      if (data!.isEmpty) return;
-      setState(() {
-        historyList.addAll(data);
-        pageNum += 1;
+    try {
+      await ref
+          .read(historyServiceProvider)
+          .loadAllHistoryPaging(pageNum: pageNum)
+          .then((data) {
         isLoading = false;
+        if (data!.isEmpty) return;
+
+        setState(() {
+          historyList.addAll(data);
+          pageNum += 1;
+        });
       });
-    });
+    } catch (e) {
+      logger.e('EpubHistoryScreen loadHistory $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(S.of(context).errorMsg('historyLoadFailed')),
+        ),
+      );
+    }
   }
 
   void _onTap(HistoryModel history) async {

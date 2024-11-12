@@ -48,6 +48,8 @@ class MessageLookup extends MessageLookupByLibrary {
             'localEpubNotExists':
                 'The file information does not exist on the local device.',
             'epubLoadFailed': 'An error occurred while opening the EPUB file.',
+            'historyLoadFailed':
+                'An error occurred while retrieving the viewing history.',
             'other': '',
           })}";
 

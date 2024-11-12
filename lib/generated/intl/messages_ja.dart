@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
             'imageLoadFail': '画像の読み込みに失敗しました',
             'localEpubNotExists': 'ローカルデバイスに該当するファイル情報が存在しません。',
             'epubLoadFailed': 'EPUBファイルを開く際にエラーが発生しました。',
+            'historyLoadFailed': '閲覧履歴の取得中にエラーが発生しました。',
             'other': '',
           })}";
 

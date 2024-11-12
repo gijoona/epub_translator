@@ -254,7 +254,7 @@ class S {
     );
   }
 
-  /// `{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} emptyAPIInfo{번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.} imageLoadFail{이미지 로드 실패} localEpubNotExists{로컬 디바이스 내에 해당 파일정보가 없습니다.} epubLoadFailed{EPUB 파일을 여는 중 오류가 발생했습니다.} other{}}`
+  /// `{msgType, select, noneSelectedFile{선택된 파일이 없습니다.} emptyAPIInfo{번역기능을 이용하기 위해서는 설정에서 OPENAI정보를 입력하셔야 합니다.} imageLoadFail{이미지 로드 실패} localEpubNotExists{로컬 디바이스 내에 해당 파일정보가 없습니다.} epubLoadFailed{EPUB 파일을 여는 중 오류가 발생했습니다.} historyLoadFailed{열람이력 조회 중 오류가 발생했습니다.} other{}}`
   String errorMsg(String msgType) {
     return Intl.select(
       msgType,
@@ -264,6 +264,7 @@ class S {
         'imageLoadFail': '이미지 로드 실패',
         'localEpubNotExists': '로컬 디바이스 내에 해당 파일정보가 없습니다.',
         'epubLoadFailed': 'EPUB 파일을 여는 중 오류가 발생했습니다.',
+        'historyLoadFailed': '열람이력 조회 중 오류가 발생했습니다.',
         'other': '',
       },
       name: 'errorMsg',

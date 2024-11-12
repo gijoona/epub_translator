@@ -64,7 +64,7 @@
             }
         }
     },
-    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} emptyAPIInfo{To use the translation function, you must enter OPENAI information in settings.} imageLoadFail{Image load failed} localEpubNotExists{The file information does not exist on the local device.} epubLoadFailed{An error occurred while opening the EPUB file.} other{}}",
+    "errorMsg": "{msgType, select, noneSelectedFile{Plase Selected EPUB File.} emptyAPIInfo{To use the translation function, you must enter OPENAI information in settings.} imageLoadFail{Image load failed} localEpubNotExists{The file information does not exist on the local device.} epubLoadFailed{An error occurred while opening the EPUB file.} historyLoadFailed{An error occurred while retrieving the viewing history.} other{}}",
     "@errorMsg": {
         "description": "Error Message Define",
         "placeholders": {
